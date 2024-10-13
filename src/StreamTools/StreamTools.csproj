@@ -7,4 +7,10 @@
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Authors>bitc0der</Authors>
+    <Description>Yet another one library with .NET streaming helpers.</Description>
+    <PackageTags>stream;string;</PackageTags>
+  </PropertyGroup>
+
 </Project>
