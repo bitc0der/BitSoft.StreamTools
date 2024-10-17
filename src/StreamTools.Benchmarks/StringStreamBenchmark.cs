@@ -14,11 +14,15 @@ public class StringStreamBenchmark
 	private Stream? _internalStream;
 	private Stream? _output;
 
-	[IterationSetup]
+	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		_string = CreateString(length: 1024 * 1024);
+		_string = CreateString(length: 64 * 1024 * 1024);
+	}
 
+	[IterationSetup]
+	public void IterationSetup()
+	{
 		_output = new MemoryStream();
 		_internalStream = new GZipStream(_output, CompressionMode.Compress, leaveOpen: true);
 	}
