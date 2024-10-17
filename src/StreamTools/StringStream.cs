@@ -43,11 +43,15 @@ public class StringStream : Stream
 		_encoding = encoding ?? DefaultEncoding;
 	}
 
-	public StringStream(IStringBuffer? stringBuffer = null, Encoding? encoding = null)
+	public StringStream(
+		Func<IStringBuffer>? stringBuffer = null,
+		Encoding? encoding = null)
 	{
 		_mode = StringStreamMode.Write;
 		_encoding = encoding ?? DefaultEncoding;
-		_buffer = stringBuffer ?? new StringBuilderBuffer(_encoding);
+		_buffer = stringBuffer is null
+			? new StringBuilderBuffer(_encoding)
+			: stringBuffer();
 	}
 
 	public override void Flush()
