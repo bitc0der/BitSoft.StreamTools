@@ -108,6 +108,16 @@ public class StringStream : Stream
 		throw new InvalidOperationException("Unknown mode");
 	}
 
+	protected override void Dispose(bool disposing)
+	{
+		base.Dispose(disposing);
+
+		if (_mode == StringStreamMode.Write)
+		{
+			_buffer?.Dispose();
+		}
+	}
+
 	private void CheckMode(StringStreamMode mode)
 	{
 		if (_mode == mode) return;
