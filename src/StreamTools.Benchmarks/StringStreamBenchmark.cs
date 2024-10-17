@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
+using StreamTools.Benchmarks.Utils;
 
 namespace StreamTools.Benchmarks;
 
@@ -17,7 +18,7 @@ public class StringStreamBenchmark
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		_string = CreateString(length: 64 * 1024 * 1024);
+		_string = Create.String(length: 64 * 1024 * 1024);
 	}
 
 	[IterationSetup]
@@ -50,16 +51,4 @@ public class StringStreamBenchmark
 	}
 
 	private void Compress(Stream stream) => stream.CopyTo(_internalStream!);
-
-	private static string CreateString(int length)
-	{
-		var builder = new StringBuilder(capacity: length);
-
-		for (var i = 0; i < length; i++)
-		{
-			builder.Append('A');
-		}
-
-		return builder.ToString();
-	}
 }
