@@ -1,8 +1,10 @@
-﻿namespace StreamTools;
+﻿using System;
 
-public interface IStringBuffer
+namespace StreamTools;
+
+public interface IStringBuffer : IDisposable
 {
-	void Append(byte[] chars, int offset, int length);
+	void Append(byte[] buffer, int offset, int length);
 
 	string Build();
 }

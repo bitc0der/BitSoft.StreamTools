@@ -42,4 +42,8 @@ public sealed class StringBuilderBuffer : IStringBuffer
 	}
 
 	public string Build() => _stringBuilder.ToString();
+	public void Dispose()
+	{
+		// do nothing
+	}
 }
