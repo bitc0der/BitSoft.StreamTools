@@ -1,7 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
 using StreamTools.Benchmarks.Utils;
-using System;
-using System.Text;
 
 namespace StreamTools.Benchmarks;
 
@@ -20,7 +18,7 @@ public class StringBufferBenchmark
 	[Benchmark]
 	public string StringBuilder()
 	{
-		using var buffer = new StringBuilderBuffer(encoding: Encoding.UTF8);
+		using var buffer = new StringBuilderBuffer();
 		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
 		return buffer.Build();
 	}

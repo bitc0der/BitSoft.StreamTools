@@ -11,9 +11,9 @@ public sealed class StringBuilderBuffer : IStringBuffer
 
 	private readonly StringBuilder _stringBuilder = new();
 
-	public StringBuilderBuffer(Encoding encoding, ArrayPool<char>? pool = null)
+	public StringBuilderBuffer(Encoding? encoding = null, ArrayPool<char>? pool = null)
 	{
-		_encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
+		_encoding = encoding ?? Encoding.UTF8;
 		_pool = pool ?? ArrayPool<char>.Shared;
 	}
 
