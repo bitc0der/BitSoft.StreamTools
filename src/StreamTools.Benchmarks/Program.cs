@@ -1,4 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
-using StreamTools.Benchmarks;
+using System.Reflection;
 
-BenchmarkRunner.Run<StringStreamBenchmark>();
+new BenchmarkSwitcher(typeof(Program).GetTypeInfo().Assembly).Run(args);
