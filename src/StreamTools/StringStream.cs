@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -8,14 +9,18 @@ public class StringStream : Stream
 {
 	public static Encoding DefaultEncoding { get; } = Encoding.UTF8;
 
+	private readonly StringStreamMode _mode;
+
 	private readonly ReadOnlyMemory<char> _source;
 	private readonly Encoding _encoding;
 
+	private readonly IStringBuffer? _buffer;
+
 	private int _offset;
 
-	public override bool CanRead => _offset < _source.Length - 1;
+	public override bool CanRead => _mode == StringStreamMode.Read && _offset < _source.Length - 1;
 	public override bool CanSeek => false;
-	public override bool CanWrite => false;
+	public override bool CanWrite => _mode == StringStreamMode.Write;
 
 	public override long Length => throw new NotSupportedException();
 
@@ -33,8 +38,16 @@ public class StringStream : Stream
 
 	public StringStream(ReadOnlyMemory<char> source, Encoding? encoding = null)
 	{
+		_mode = StringStreamMode.Read;
 		_source = source;
 		_encoding = encoding ?? DefaultEncoding;
+	}
+
+	public StringStream(IStringBuffer? stringBuffer = null, Encoding? encoding = null)
+	{
+		_mode = StringStreamMode.Write;
+		_encoding = encoding ?? DefaultEncoding;
+		_buffer = stringBuffer ?? new StringBuilderBuffer(_encoding);
 	}
 
 	public override void Flush()
@@ -45,6 +58,8 @@ public class StringStream : Stream
 	public override int Read(byte[] buffer, int offset, int count)
 	{
 		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+
+		CheckMode(StringStreamMode.Read);
 
 		if (count == 0)
 			return 0;
@@ -67,5 +82,42 @@ public class StringStream : Stream
 
 	public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
 	public override void SetLength(long value) => throw new NotSupportedException();
-	public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+
+	public override void Write(byte[] buffer, int offset, int count)
+	{
+		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+
+		CheckMode(StringStreamMode.Write);
+
+		if (count == 0) return;
+
+		Debug.Assert(_buffer is not null);
+
+		_buffer.Append(buffer, offset, length: count);
+	}
+
+	public string GetString()
+	{
+		if (_mode == StringStreamMode.Read)
+			return new string(_source.Span);
+		if (_mode == StringStreamMode.Write)
+		{
+			Debug.Assert(_buffer is not null);
+			return _buffer.Build();
+		}
+		throw new InvalidOperationException("Unknown mode");
+	}
+
+	private void CheckMode(StringStreamMode mode)
+	{
+		if (_mode == mode) return;
+
+		throw new InvalidOperationException("Invalid mode");
+	}
+
+	private enum StringStreamMode
+	{
+		Read,
+		Write
+	}
 }
