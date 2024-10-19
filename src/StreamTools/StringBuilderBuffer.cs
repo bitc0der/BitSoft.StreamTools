@@ -9,7 +9,7 @@ public sealed class StringBuilderBuffer : IStringBuffer
 	private readonly Encoding _encoding;
 	private readonly ArrayPool<char> _pool;
 
-	private readonly StringBuilder _stringBuilder = new();
+	private StringBuilder? _stringBuilder;
 
 	public StringBuilderBuffer(Encoding? encoding = null, ArrayPool<char>? pool = null)
 	{
@@ -23,9 +23,12 @@ public sealed class StringBuilderBuffer : IStringBuffer
 
 		if (length == 0) return;
 
-		var maxCharsCount = _encoding.GetCharCount(buffer);
+		var charsCount = _encoding.GetCharCount(buffer, index: offset, count: length);
 
-		var array = _pool.Rent(minimumLength: maxCharsCount);
+		if (_stringBuilder is null)
+			_stringBuilder = new StringBuilder(capacity: charsCount);
+
+		var array = _pool.Rent(minimumLength: charsCount);
 
 		try
 		{
@@ -41,7 +44,10 @@ public sealed class StringBuilderBuffer : IStringBuffer
 		}
 	}
 
-	public string Build() => _stringBuilder.ToString();
+	public string Build() => _stringBuilder is null
+		? string.Empty
+		: _stringBuilder.ToString();
+
 	public void Dispose()
 	{
 		// do nothing
