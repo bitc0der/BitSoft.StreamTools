@@ -38,3 +38,15 @@
   Allocated : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
   1 ms      : 1 Millisecond (0.001 sec)
 ```
+
+# System info
+```text
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2033)
+AMD Ryzen 7 5800U with Radeon Graphics, 1 CPU, 16 logical and 8 physical cores
+.NET SDK 8.0.403
+  [Host]   : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
+  ShortRun : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
+
+Job=ShortRun  IterationCount=3  LaunchCount=1
+WarmupCount=3
+```
