@@ -7,13 +7,25 @@ namespace StreamTools.Tests;
 public class StringStreamTests
 {
 	[Test]
+	public void Should_CreateEmpryStream()
+	{
+		// Act
+		var stream = new StringStream();
+
+		// Assert
+		Assert.That(stream, Is.Not.Null);
+		Assert.That(stream.Length, Is.EqualTo(0));
+		Assert.That(stream.Position, Is.EqualTo(0));
+	}
+
+	[Test]
 	public void Should_ReadStringStream()
 	{
 		// Arrange
 		var str = CreateString();
 
-		using var sr = new StringStream(str);
-		using var reader = new StreamReader(sr);
+		using var stream = new StringStream(str);
+		using var reader = new StreamReader(stream);
 
 		// Act
 		var result = reader.ReadToEnd();
@@ -21,6 +33,8 @@ public class StringStreamTests
 		// Assert
 		Assert.That(result, Is.Not.Null);
 		Assert.That(result, Is.EqualTo(str));
+		Assert.That(stream.Length, Is.EqualTo(str.Length));
+		Assert.That(stream.Position, Is.EqualTo(str.Length));
 	}
 
 	[Test]
@@ -39,6 +53,8 @@ public class StringStreamTests
 		var result = stream.GetString();
 
 		Assert.That(result, Is.EqualTo(sourceString));
+		Assert.That(stream.Length, Is.EqualTo(result.Length));
+		Assert.That(stream.Position, Is.EqualTo(result.Length));
 	}
 
 	private static string CreateString() => Guid.NewGuid().ToString();
