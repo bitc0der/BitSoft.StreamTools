@@ -7,35 +7,38 @@ namespace StreamTools.Benchmarks;
 [MemoryDiagnoser]
 public class StringBufferBenchmark
 {
-	private byte[]? _buffer;
+	private byte[]? _bytes;
 
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		_buffer = Create.Buffer(length: 64 * 1024 * 1024);
+		_bytes = Create.Buffer(length: 64 * 1024 * 1024);
 	}
 
 	[Benchmark]
 	public string StringBuilderBuffer()
 	{
 		using var buffer = new StringBuilderBuffer();
-		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
-		return buffer.Build();
+		return Write(buffer, _bytes!);
 	}
 
 	[Benchmark]
 	public string ArrayStringBuffer()
 	{
 		using var buffer = new ArrayStringBuffer();
-		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
-		return buffer.Build();
+		return Write(buffer, _bytes!);
 	}
 
 	[Benchmark]
 	public string MemoryStringBuffer()
 	{
 		using var buffer = new MemoryStringBuffer();
-		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
+		return Write(buffer, _bytes!);
+	}
+
+	private static string Write(IStringBuffer buffer, byte[] bytes)
+	{
+		buffer.Append(bytes, offset: 0, length: bytes.Length);
 		return buffer.Build();
 	}
 }
