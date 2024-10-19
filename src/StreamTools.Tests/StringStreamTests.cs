@@ -78,6 +78,25 @@ public class StringStreamTests
 	}
 
 	[Test]
+	public void Should_DoubleReadStringStream()
+	{
+		// Arrange
+		var str = CreateString();
+
+		using var stream = new StringStream(str);
+		using var reader = new StreamReader(stream);
+
+		// Act
+		var result1 = reader.ReadToEnd();
+		stream.Position = 0;
+		var result2 = reader.ReadToEnd();
+
+		// Assert
+		Assert.That(result1, Is.EqualTo(str));
+		Assert.That(result2, Is.EqualTo(str));
+	}
+
+	[Test]
 	public void Should_WriteStringStream()
 	{
 		// Arrange
