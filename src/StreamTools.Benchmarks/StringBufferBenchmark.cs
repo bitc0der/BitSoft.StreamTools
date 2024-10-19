@@ -1,5 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using StreamTools.Benchmarks.Utils;
+using System.IO;
+using System.Text;
 
 namespace StreamTools.Benchmarks;
 
@@ -34,6 +36,12 @@ public class StringBufferBenchmark
 	{
 		using var buffer = new MemoryStringBuffer();
 		return Write(buffer, _bytes!);
+	}
+
+	[Benchmark]
+	public string MemoryStream()
+	{
+		return Encoding.UTF8.GetString(_bytes!);
 	}
 
 	private static string Write(IStringBuffer buffer, byte[] bytes)
