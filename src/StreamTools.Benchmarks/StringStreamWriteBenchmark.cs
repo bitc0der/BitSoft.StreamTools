@@ -20,7 +20,7 @@ public class StringStreamWriteBenchmark
 	[Benchmark]
 	public string StringStream()
 	{
-		using var stream = new StringStream();
+		using var stream = new StringStream(() => new StringBuilderBuffer());
 		_buffer!.DecompressTo(stream);
 		return stream.GetString();
 	}

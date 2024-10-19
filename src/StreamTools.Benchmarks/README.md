@@ -21,10 +21,10 @@
 ```text
 | Method                   | Mean     | Error    | StdDev  | Gen0      | Gen1      | Gen2      | Allocated |
 |------------------------- |---------:|---------:|--------:|----------:|----------:|----------:|----------:|
-| StringStream             | 139.7 ms | 10.96 ms | 0.60 ms |         - |         - |         - |    128 MB |
-| StringStream_ArrayPool   | 169.1 ms | 19.26 ms | 1.06 ms |         - |         - |         - |    128 MB |
-| StringStream_MemoeryPool | 168.7 ms | 18.11 ms | 0.99 ms |         - |         - |         - |    128 MB |
-| MemoryStream             | 188.5 ms |  9.74 ms | 0.53 ms | 4666.6667 | 4666.6667 | 4666.6667 | 255.88 MB |
+| StringStream             | 162.0 ms | 16.01 ms | 0.88 ms | 2500.0000 | 2500.0000 | 2500.0000 | 256.05 MB |
+| StringStream_ArrayPool   | 178.2 ms | 13.73 ms | 0.75 ms |         - |         - |         - |    128 MB |
+| StringStream_MemoeryPool | 169.0 ms |  8.45 ms | 0.46 ms |         - |         - |         - |    128 MB |
+| MemoryStream             | 189.7 ms |  6.51 ms | 0.36 ms | 4666.6667 | 4666.6667 | 4666.6667 | 255.88 MB |
 ```
 
 # Legend
