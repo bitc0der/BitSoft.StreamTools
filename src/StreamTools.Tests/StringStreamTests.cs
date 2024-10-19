@@ -23,6 +23,11 @@ public class StringStreamTests
 		Assert.That(stream.CanSeek, Is.EqualTo(false));
 		Assert.That(stream.CanWrite, Is.EqualTo(false));
 
+		Assert.Throws<InvalidOperationException>(() => stream.Write([1, 2, 3]));
+
+		Assert.Throws<NotSupportedException>(() => stream.Position = 1);
+		Assert.Throws<NotSupportedException>(() => stream.Seek(offset: 1, SeekOrigin.Begin));
+
 		var result = stream.GetString();
 
 		Assert.That(result, Is.EqualTo(value));
@@ -41,6 +46,13 @@ public class StringStreamTests
 		Assert.That(stream.CanRead, Is.EqualTo(false));
 		Assert.That(stream.CanSeek, Is.EqualTo(false));
 		Assert.That(stream.CanWrite, Is.EqualTo(true));
+
+		var buffer = new byte[8];
+
+		Assert.Throws<InvalidOperationException>(() => stream.Read(buffer.AsSpan()));
+
+		Assert.Throws<NotSupportedException>(() => stream.Position = 1);
+		Assert.Throws<NotSupportedException>(() => stream.Seek(offset: 1, SeekOrigin.Begin));
 	}
 
 	[Test]
@@ -63,6 +75,9 @@ public class StringStreamTests
 		Assert.That(stream.CanRead, Is.EqualTo(false));
 		Assert.That(stream.CanSeek, Is.EqualTo(false));
 		Assert.That(stream.CanWrite, Is.EqualTo(false));
+
+		Assert.Throws<NotSupportedException>(() => stream.Position = 1);
+		Assert.Throws<NotSupportedException>(() => stream.Seek(offset: 1, SeekOrigin.Begin));
 	}
 
 	[Test]
@@ -86,6 +101,9 @@ public class StringStreamTests
 		Assert.That(stream.CanRead, Is.EqualTo(false));
 		Assert.That(stream.CanSeek, Is.EqualTo(false));
 		Assert.That(stream.CanWrite, Is.EqualTo(true));
+
+		Assert.Throws<NotSupportedException>(() => stream.Position = 1);
+		Assert.Throws<NotSupportedException>(() => stream.Seek(offset: 1, SeekOrigin.Begin));
 	}
 
 	private static string CreateString() => Guid.NewGuid().ToString();
