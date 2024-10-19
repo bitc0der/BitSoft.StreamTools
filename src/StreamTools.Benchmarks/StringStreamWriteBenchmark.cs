@@ -18,9 +18,9 @@ public class StringStreamWriteBenchmark
 	}
 
 	[Benchmark]
-	public string StringStream_WithStringBUilder()
+	public string StringStream_WithStringBuilder()
 	{
-		using var stream = StringStream.WithStringBUilder();
+		using var stream = StringStream.WithStringBuilder();
 		_buffer!.DecompressTo(stream);
 		return stream.GetString();
 	}
