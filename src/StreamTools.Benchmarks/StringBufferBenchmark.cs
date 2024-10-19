@@ -30,4 +30,12 @@ public class StringBufferBenchmark
 		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
 		return buffer.Build();
 	}
+
+	[Benchmark]
+	public string MemoryBuilder()
+	{
+		using var buffer = new MemoryStringBuffer();
+		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
+		return buffer.Build();
+	}
 }
