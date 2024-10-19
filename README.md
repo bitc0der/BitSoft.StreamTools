@@ -50,3 +50,7 @@ public static string Decompress(Stream sourceStream)
 	return outputStream.GetString();
 }
 ```
+
+## Benchmarks
+
+You can find [here](src/StreamTools.Benchmarks/README.md).
