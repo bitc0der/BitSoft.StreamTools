@@ -18,25 +18,25 @@ public class StringStreamWriteBenchmark
 	}
 
 	[Benchmark]
-	public string StringStream()
+	public string StringStream_WithStringBUilder()
 	{
-		using var stream = new StringStream(() => new StringBuilderBuffer());
+		using var stream = StringStream.WithStringBUilder();
 		_buffer!.DecompressTo(stream);
 		return stream.GetString();
 	}
 
 	[Benchmark]
-	public string StringStream_ArrayPool()
+	public string StringStream_WithArrayPool()
 	{
-		using var stream = new StringStream(() => new ArrayStringBuffer());
+		using var stream = StringStream.WithArrayPool();
 		_buffer!.DecompressTo(stream);
 		return stream.GetString();
 	}
 
 	[Benchmark]
-	public string StringStream_MemoeryPool()
+	public string StringStream_WithMemoryPool()
 	{
-		using var stream = new StringStream(() => new MemoryStringBuffer());
+		using var stream = StringStream.WithMemoryPool();
 		_buffer!.DecompressTo(stream);
 		return stream.GetString();
 	}

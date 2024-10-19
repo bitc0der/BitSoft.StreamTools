@@ -19,12 +19,12 @@
 
 ## StringStreamWriteBenchmark
 ```text
-| Method                   | Mean     | Error    | StdDev  | Gen0      | Gen1      | Gen2      | Allocated |
-|------------------------- |---------:|---------:|--------:|----------:|----------:|----------:|----------:|
-| StringStream             | 162.0 ms | 16.01 ms | 0.88 ms | 2500.0000 | 2500.0000 | 2500.0000 | 256.05 MB |
-| StringStream_ArrayPool   | 178.2 ms | 13.73 ms | 0.75 ms |         - |         - |         - |    128 MB |
-| StringStream_MemoeryPool | 169.0 ms |  8.45 ms | 0.46 ms |         - |         - |         - |    128 MB |
-| MemoryStream             | 189.7 ms |  6.51 ms | 0.36 ms | 4666.6667 | 4666.6667 | 4666.6667 | 255.88 MB |
+| Method                         | Mean     | Error    | StdDev  | Gen0      | Gen1      | Gen2      | Allocated |
+|------------------------------- |---------:|---------:|--------:|----------:|----------:|----------:|----------:|
+| StringStream_WithStringBUilder | 161.1 ms | 11.50 ms | 0.63 ms | 2500.0000 | 2500.0000 | 2500.0000 | 256.05 MB |
+| StringStream_WithArrayPool     | 176.3 ms |  6.58 ms | 0.36 ms |         - |         - |         - |    128 MB |
+| StringStream_WithMemoryPool    | 167.1 ms | 35.61 ms | 1.95 ms |         - |         - |         - |    128 MB |
+| MemoryStream                   | 188.2 ms |  8.00 ms | 0.44 ms | 4666.6667 | 4666.6667 | 4666.6667 | 255.88 MB |
 ```
 
 # Legend

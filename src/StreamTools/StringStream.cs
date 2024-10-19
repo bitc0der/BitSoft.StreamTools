@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -44,15 +45,27 @@ public class StringStream : Stream
 	}
 
 	public StringStream(
-		Func<IStringBuffer>? stringBuffer = null,
+		Func<Encoding, IStringBuffer>? stringBuffer = null,
 		Encoding? encoding = null)
 	{
 		_mode = StringStreamMode.Write;
 		_encoding = encoding ?? DefaultEncoding;
 		_buffer = stringBuffer is null
 			? new MemoryStringBuffer(_encoding)
-			: stringBuffer();
+			: stringBuffer(_encoding);
 	}
+
+	public static StringStream WithStringBUilder(Encoding? encoding = null) => new(e => new StringBuilderBuffer(e), encoding);
+
+	public static StringStream WithArrayPool(
+		Encoding? encoding = null,
+		ArrayPool<char>? arrayPool = null
+	) => new(e => new ArrayStringBuffer(e, arrayPool), encoding);
+
+	public static StringStream WithMemoryPool(
+		Encoding? encoding = null,
+		MemoryPool<char>? memoryPool = null
+	) => new(e => new MemoryStringBuffer(e, memoryPool), encoding);
 
 	public override void Flush()
 	{
