@@ -56,7 +56,11 @@ public class StringStream : Stream
 			: stringBuffer(_encoding);
 	}
 
-	public static StringStream WithStringBuilder(Encoding? encoding = null) => new(e => new StringBuilderBuffer(e), encoding);
+	public static StringStream WithStringBuilder(
+		Encoding? encoding = null,
+		StringBuilder? stringBuilder = null,
+		ArrayPool<char>? arrayPool = null
+	) => new(e => new StringBuilderBuffer(e, stringBuilder, arrayPool), encoding);
 
 	public static StringStream WithArrayPool(
 		Encoding? encoding = null,

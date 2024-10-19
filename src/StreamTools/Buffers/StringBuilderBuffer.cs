@@ -11,10 +11,14 @@ public sealed class StringBuilderBuffer : IStringBuffer
 
 	private StringBuilder? _stringBuilder;
 
-	public StringBuilderBuffer(Encoding? encoding = null, ArrayPool<char>? pool = null)
+	public StringBuilderBuffer(
+		Encoding? encoding = null,
+		StringBuilder? stringBuilder = null,
+		ArrayPool<char>? pool = null)
 	{
 		_encoding = encoding ?? Encoding.UTF8;
 		_pool = pool ?? ArrayPool<char>.Shared;
+		_stringBuilder = stringBuilder;
 	}
 
 	public int Length => _stringBuilder is null
