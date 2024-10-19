@@ -1,6 +1,7 @@
 using System.IO;
 using System;
 using System.Text;
+using System.Linq;
 
 namespace StreamTools.Tests;
 
@@ -24,7 +25,6 @@ public class StringStreamTests
 		Assert.That(stream.CanWrite, Is.EqualTo(false));
 
 		Assert.Throws<InvalidOperationException>(() => stream.Write([1, 2, 3]));
-		Assert.Throws<NotSupportedException>(() => stream.Seek(offset: 1, SeekOrigin.Begin));
 
 		var result = stream.GetString();
 
@@ -49,8 +49,6 @@ public class StringStreamTests
 
 		Assert.Throws<InvalidOperationException>(() => stream.Read(buffer.AsSpan()));
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
-
-		Assert.Throws<NotSupportedException>(() => stream.Seek(offset: 1, SeekOrigin.Begin));
 	}
 
 	[Test]
@@ -73,8 +71,6 @@ public class StringStreamTests
 		Assert.That(stream.CanRead, Is.EqualTo(false));
 		Assert.That(stream.CanSeek, Is.EqualTo(true));
 		Assert.That(stream.CanWrite, Is.EqualTo(false));
-
-		Assert.Throws<NotSupportedException>(() => stream.Seek(offset: 1, SeekOrigin.Begin));
 	}
 
 	[Test]
@@ -94,6 +90,63 @@ public class StringStreamTests
 		// Assert
 		Assert.That(result1, Is.EqualTo(str));
 		Assert.That(result2, Is.EqualTo(str));
+	}
+
+	[Test]
+	public void Should_DoubleReadStringStream_When_SeekFromBegin()
+	{
+		// Arrange
+		var str = CreateString();
+
+		using var stream = new StringStream(str);
+		using var reader = new StreamReader(stream);
+
+		// Act
+		var result1 = reader.ReadToEnd();
+		stream.Seek(0, SeekOrigin.Begin);
+		var result2 = reader.ReadToEnd();
+
+		// Assert
+		Assert.That(result1, Is.EqualTo(str));
+		Assert.That(result2, Is.EqualTo(str));
+	}
+
+	[Test]
+	public void Should_DoubleReadStringStream_When_SeekFromEnd()
+	{
+		// Arrange
+		var str = CreateString();
+
+		using var stream = new StringStream(str);
+		using var reader = new StreamReader(stream);
+
+		// Act
+		var result1 = reader.ReadToEnd();
+		stream.Seek(stream.Length, SeekOrigin.End);
+		var result2 = reader.ReadToEnd();
+
+		// Assert
+		Assert.That(result1, Is.EqualTo(str));
+		Assert.That(result2, Is.EqualTo(str));
+	}
+
+	[Test]
+	public void Should_DoubleReadHalfStringStream()
+	{
+		// Arrange
+		var str = CreateString();
+
+		using var stream = new StringStream(str);
+		using var reader = new StreamReader(stream);
+
+		// Act
+		var result1 = reader.ReadToEnd();
+		stream.Seek(str.Length / 2, SeekOrigin.Begin);
+		var result2 = reader.ReadToEnd();
+
+		// Assert
+		Assert.That(result1, Is.EqualTo(str));
+		Assert.That(result2, Is.EqualTo(str.Substring(startIndex: str.Length / 2)));
 	}
 
 	[Test]
@@ -119,7 +172,6 @@ public class StringStreamTests
 		Assert.That(stream.CanWrite, Is.EqualTo(true));
 
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
-		Assert.Throws<NotSupportedException>(() => stream.Seek(offset: 1, SeekOrigin.Begin));
 	}
 
 	private static string CreateString() => Guid.NewGuid().ToString();

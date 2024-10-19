@@ -29,7 +29,7 @@ public class StringStream : Stream
 	public override long Position
 	{
 		get => GetPosition();
-		set => SetPosition(value);
+		set => Seek(offset: value, SeekOrigin.Begin);
 	}
 
 	public StringStream(string source, Encoding? encoding = null)
@@ -98,7 +98,29 @@ public class StringStream : Stream
 		return result;
 	}
 
-	public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+	public override long Seek(long offset, SeekOrigin origin)
+	{
+		CheckMode(StringStreamMode.Read);
+
+		if (offset < 0 || offset > int.MaxValue)
+			throw new ArgumentOutOfRangeException(nameof(offset));
+
+		var newOffset = origin switch
+		{
+			SeekOrigin.Begin => offset,
+			SeekOrigin.Current => _offset + offset,
+			SeekOrigin.End => _source.Length - offset,
+			_ => throw new ArgumentOutOfRangeException(paramName: nameof(origin))
+		};
+
+		if (newOffset < 0 || newOffset > _source.Length)
+			throw new ArgumentOutOfRangeException(nameof(offset));
+
+		_offset = (int)newOffset;
+
+		return _offset;
+	}
+
 	public override void SetLength(long value) => throw new NotSupportedException();
 
 	public override void Write(byte[] buffer, int offset, int count)
@@ -154,16 +176,6 @@ public class StringStream : Stream
 			StringStreamMode.Write => GetInternalBufferLength(),
 			_ => throw new InvalidOperationException("Invalid mode")
 		};
-	}
-
-	private void SetPosition(long position)
-	{
-		CheckMode(StringStreamMode.Read);
-
-		if (position < 0 || position > int.MaxValue)
-			throw new ArgumentOutOfRangeException(nameof(position));
-
-		_offset = (int)position;
 	}
 
 	private int GetInternalBufferLength() => _buffer is null ? 0 : _buffer.Length;
