@@ -21,7 +21,7 @@ public class StringStream : Stream
 	private int _offset;
 
 	public override bool CanRead => _mode == StringStreamMode.Read && _offset < _source.Length - 1;
-	public override bool CanSeek => false;
+	public override bool CanSeek => _mode == StringStreamMode.Read;
 	public override bool CanWrite => _mode == StringStreamMode.Write;
 
 	public override long Length => GetLength();
@@ -29,7 +29,7 @@ public class StringStream : Stream
 	public override long Position
 	{
 		get => GetPosition();
-		set => throw new NotSupportedException();
+		set => SetPosition(value);
 	}
 
 	public StringStream(string source, Encoding? encoding = null)
@@ -154,6 +154,16 @@ public class StringStream : Stream
 			StringStreamMode.Write => GetInternalBufferLength(),
 			_ => throw new InvalidOperationException("Invalid mode")
 		};
+	}
+
+	private void SetPosition(long position)
+	{
+		CheckMode(StringStreamMode.Read);
+
+		if (position < 0 || position > int.MaxValue)
+			throw new ArgumentOutOfRangeException(nameof(position));
+
+		_offset = (int)position;
 	}
 
 	private int GetInternalBufferLength() => _buffer is null ? 0 : _buffer.Length;
