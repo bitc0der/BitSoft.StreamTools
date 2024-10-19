@@ -22,6 +22,10 @@ public class StringStreamTests
 		Assert.That(stream.CanRead, Is.EqualTo(true));
 		Assert.That(stream.CanSeek, Is.EqualTo(false));
 		Assert.That(stream.CanWrite, Is.EqualTo(false));
+
+		var result = stream.GetString();
+
+		Assert.That(result, Is.EqualTo(value));
 	}
 
 	[Test]
