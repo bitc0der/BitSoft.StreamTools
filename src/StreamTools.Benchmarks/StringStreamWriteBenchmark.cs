@@ -18,7 +18,7 @@ public class StringStreamWriteBenchmark
 	}
 
 	[Benchmark]
-	public string StrinbStream()
+	public string StringStream()
 	{
 		using var stream = new StringStream();
 		_buffer!.DecompressTo(stream);
@@ -26,7 +26,7 @@ public class StringStreamWriteBenchmark
 	}
 
 	[Benchmark]
-	public string StrinbStream_ArrayPool()
+	public string StringStream_ArrayPool()
 	{
 		using var stream = new StringStream(() => new ArrayStringBuffer());
 		_buffer!.DecompressTo(stream);
@@ -34,7 +34,7 @@ public class StringStreamWriteBenchmark
 	}
 
 	[Benchmark]
-	public string StrinbStream_MemoeryPool()
+	public string StringStream_MemoeryPool()
 	{
 		using var stream = new StringStream(() => new MemoryStringBuffer());
 		_buffer!.DecompressTo(stream);

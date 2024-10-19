@@ -21,9 +21,9 @@
 ```text
 | Method                   | Mean     | Error    | StdDev  | Gen0      | Gen1      | Gen2      | Allocated |
 |------------------------- |---------:|---------:|--------:|----------:|----------:|----------:|----------:|
-| StrinbStream             | 139.7 ms | 10.96 ms | 0.60 ms |         - |         - |         - |    128 MB |
-| StrinbStream_ArrayPool   | 169.1 ms | 19.26 ms | 1.06 ms |         - |         - |         - |    128 MB |
-| StrinbStream_MemoeryPool | 168.7 ms | 18.11 ms | 0.99 ms |         - |         - |         - |    128 MB |
+| StringStream             | 139.7 ms | 10.96 ms | 0.60 ms |         - |         - |         - |    128 MB |
+| StringStream_ArrayPool   | 169.1 ms | 19.26 ms | 1.06 ms |         - |         - |         - |    128 MB |
+| StringStream_MemoeryPool | 168.7 ms | 18.11 ms | 0.99 ms |         - |         - |         - |    128 MB |
 | MemoryStream             | 188.5 ms |  9.74 ms | 0.53 ms | 4666.6667 | 4666.6667 | 4666.6667 | 255.88 MB |
 ```
 
