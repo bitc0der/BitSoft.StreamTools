@@ -140,7 +140,7 @@ public class StringStream : Stream
 		return _mode switch
 		{
 			StringStreamMode.Read => _source.Length,
-			StringStreamMode.Write => (long)(_buffer is null ? 0 : _buffer.Length),
+			StringStreamMode.Write => GetInternalBufferLength(),
 			_ => throw new InvalidOperationException("Invalid mode"),
 		};
 	}
@@ -150,10 +150,12 @@ public class StringStream : Stream
 		return _mode switch
 		{
 			StringStreamMode.Read => _offset,
-			StringStreamMode.Write => GetLength(),
+			StringStreamMode.Write => GetInternalBufferLength(),
 			_ => throw new InvalidOperationException("Invalid mode")
 		};
 	}
+
+	private int GetInternalBufferLength() => _buffer is null ? 0 : _buffer.Length;
 
 	private void CheckMode(StringStreamMode mode)
 	{
