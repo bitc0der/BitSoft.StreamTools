@@ -2,11 +2,11 @@
 
 ## StringBufferBenchmark
 ```text
-| Method        | Mean      | Error    | StdDev   | Gen0     | Gen1     | Gen2     | Allocated |
-|-------------- |----------:|---------:|---------:|---------:|---------:|---------:|----------:|
-| StringBuilder | 130.96 ms | 7.671 ms | 0.420 ms | 500.0000 | 500.0000 | 500.0000 |    256 MB |
-| ArrayBuilder  |  30.33 ms | 1.542 ms | 0.085 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
-| MemoryBuilder |  30.43 ms | 3.048 ms | 0.167 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
+| Method        | Mean     | Error     | StdDev   | Gen0     | Gen1     | Gen2     | Allocated |
+|-------------- |---------:|----------:|---------:|---------:|---------:|---------:|----------:|
+| StringBuilder | 49.59 ms | 36.504 ms | 2.001 ms | 222.2222 | 222.2222 | 222.2222 |    256 MB |
+| ArrayBuilder  | 31.25 ms |  5.725 ms | 0.314 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
+| MemoryBuilder | 30.68 ms |  6.384 ms | 0.350 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
 ```
 
 ## StringStreamReadBenchmark
@@ -21,10 +21,10 @@
 ```text
 | Method                   | Mean     | Error    | StdDev  | Gen0      | Gen1      | Gen2      | Allocated |
 |------------------------- |---------:|---------:|--------:|----------:|----------:|----------:|----------:|
-| StrinbStream             | 163.1 ms | 42.50 ms | 2.33 ms | 2500.0000 | 2500.0000 | 2500.0000 | 256.05 MB |
-| StrinbStream_ArrayPool   | 174.6 ms |  6.17 ms | 0.34 ms |         - |         - |         - |    128 MB |
-| StrinbStream_MemoeryPool | 168.3 ms | 17.35 ms | 0.95 ms |         - |         - |         - |    128 MB |
-| MemoryStream             | 190.0 ms | 21.20 ms | 1.16 ms | 4666.6667 | 4666.6667 | 4666.6667 | 255.88 MB |
+| StrinbStream             | 139.7 ms | 10.96 ms | 0.60 ms |         - |         - |         - |    128 MB |
+| StrinbStream_ArrayPool   | 169.1 ms | 19.26 ms | 1.06 ms |         - |         - |         - |    128 MB |
+| StrinbStream_MemoeryPool | 168.7 ms | 18.11 ms | 0.99 ms |         - |         - |         - |    128 MB |
+| MemoryStream             | 188.5 ms |  9.74 ms | 0.53 ms | 4666.6667 | 4666.6667 | 4666.6667 | 255.88 MB |
 ```
 
 # Legend
