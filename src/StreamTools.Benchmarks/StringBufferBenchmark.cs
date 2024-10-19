@@ -16,7 +16,7 @@ public class StringBufferBenchmark
 	}
 
 	[Benchmark]
-	public string StringBuilder()
+	public string StringBuilderBuffer()
 	{
 		using var buffer = new StringBuilderBuffer();
 		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
@@ -24,7 +24,7 @@ public class StringBufferBenchmark
 	}
 
 	[Benchmark]
-	public string ArrayBuilder()
+	public string ArrayStringBuffer()
 	{
 		using var buffer = new ArrayStringBuffer();
 		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
@@ -32,7 +32,7 @@ public class StringBufferBenchmark
 	}
 
 	[Benchmark]
-	public string MemoryBuilder()
+	public string MemoryStringBuffer()
 	{
 		using var buffer = new MemoryStringBuffer();
 		buffer.Append(_buffer!, offset: 0, length: _buffer!.Length);
