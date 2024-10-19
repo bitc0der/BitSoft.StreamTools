@@ -52,9 +52,9 @@ public class MemoryStringBuffer : IStringBuffer
 
 	public string Build()
 	{
-		if (_memoryOwner is null)
-			return string.Empty;
-		return new string(_memoryOwner.Memory.Span);
+		return _memoryOwner is null
+			? string.Empty
+			: new string(_memoryOwner.Memory.Span[0.._offset]);
 	}
 
 	public void Dispose()

@@ -49,9 +49,9 @@ public class ArrayStringBuffer : IStringBuffer
 
 	public string Build()
 	{
-		if (_array is null) return string.Empty;
-
-		return new(_array);
+		return _array is null
+			? string.Empty
+			: new(_array.AsSpan(start: 0, length: _offset));
 	}
 
 	public void Dispose()
