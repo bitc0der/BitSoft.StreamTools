@@ -1,4 +1,6 @@
 # StreamTools
+[![build](https://github.com/bitc0der/StreamTools/actions/workflows/build.yml/badge.svg)](https://github.com/bitc0der/StreamTools/actions/workflows/build.yml)
+
 Yet another one library with .NET streaming helpers.
 
 ## StringStream
