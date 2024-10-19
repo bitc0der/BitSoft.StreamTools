@@ -18,6 +18,8 @@ public class MemoryStringBuffer : IStringBuffer
 		_memoryPool = memoryPool ?? MemoryPool<char>.Shared;
 	}
 
+	public int Length => _offset;
+
 	public void Append(byte[] buffer, int offset, int length)
 	{
 		if (buffer is null) throw new ArgumentNullException(nameof(buffer));

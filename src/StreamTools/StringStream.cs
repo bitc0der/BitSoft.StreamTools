@@ -23,7 +23,7 @@ public class StringStream : Stream
 	public override bool CanSeek => false;
 	public override bool CanWrite => _mode == StringStreamMode.Write;
 
-	public override long Length => throw new NotSupportedException();
+	public override long Length => GetLength();
 
 	public override long Position
 	{
@@ -133,6 +133,19 @@ public class StringStream : Stream
 		{
 			_buffer?.Dispose();
 		}
+	}
+
+	private long GetLength()
+	{
+		if (_mode == StringStreamMode.Read)
+			return _source.Length;
+		if (_mode == StringStreamMode.Write)
+		{
+			if (_buffer is not null)
+				return _buffer.Length;
+			return 0;
+		}
+		throw new InvalidOperationException("Invalid mode");
 	}
 
 	private void CheckMode(StringStreamMode mode)

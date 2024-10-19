@@ -17,6 +17,10 @@ public sealed class StringBuilderBuffer : IStringBuffer
 		_pool = pool ?? ArrayPool<char>.Shared;
 	}
 
+	public int Length => _stringBuilder is null
+		? 0
+		: _stringBuilder.Length;
+
 	public void Append(byte[] buffer, int offset, int length)
 	{
 		if (buffer is null) throw new ArgumentNullException(nameof(buffer));

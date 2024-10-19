@@ -18,6 +18,8 @@ public class ArrayStringBuffer : IStringBuffer
 		_encoding = encoding ?? Encoding.UTF8;
 	}
 
+	public int Length => _offset;
+
 	public void Append(byte[] buffer, int offset, int length)
 	{
 		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
