@@ -50,7 +50,7 @@ public class StringStream : Stream
 		_mode = StringStreamMode.Write;
 		_encoding = encoding ?? DefaultEncoding;
 		_buffer = stringBuffer is null
-			? new StringBuilderBuffer(_encoding)
+			? new MemoryStringBuffer(_encoding)
 			: stringBuffer();
 	}
 
