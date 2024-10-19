@@ -8,7 +8,7 @@ namespace StreamTools.Benchmarks;
 
 [ShortRunJob]
 [MemoryDiagnoser]
-public class StringStreamBenchmark
+public class StringStreamReadBenchmark
 {
 	private string? _string;
 
