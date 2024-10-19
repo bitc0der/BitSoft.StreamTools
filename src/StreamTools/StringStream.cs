@@ -27,7 +27,7 @@ public class StringStream : Stream
 
 	public override long Position
 	{
-		get => throw new NotSupportedException();
+		get => GetPosition();
 		set => throw new NotSupportedException();
 	}
 
@@ -137,15 +137,22 @@ public class StringStream : Stream
 
 	private long GetLength()
 	{
-		if (_mode == StringStreamMode.Read)
-			return _source.Length;
-		if (_mode == StringStreamMode.Write)
+		return _mode switch
 		{
-			if (_buffer is not null)
-				return _buffer.Length;
-			return 0;
-		}
-		throw new InvalidOperationException("Invalid mode");
+			StringStreamMode.Read => _source.Length,
+			StringStreamMode.Write => (long)(_buffer is null ? 0 : _buffer.Length),
+			_ => throw new InvalidOperationException("Invalid mode"),
+		};
+	}
+
+	private long GetPosition()
+	{
+		return _mode switch
+		{
+			StringStreamMode.Read => _offset,
+			StringStreamMode.Write => GetLength(),
+			_ => throw new InvalidOperationException("Invalid mode")
+		};
 	}
 
 	private void CheckMode(StringStreamMode mode)
