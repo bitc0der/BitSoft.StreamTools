@@ -38,7 +38,7 @@ Decompress an input stream with gZip and convert it to a string value:
 using StreamTools;
 using System.IO.Compression;
 
-public static string Decompress(Stream source)
+public static string Decompress(Stream sourceStream)
 {
 	ArgumentNullException.ThrowIfNull(source);
 
