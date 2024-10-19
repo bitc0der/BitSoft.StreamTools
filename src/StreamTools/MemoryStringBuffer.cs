@@ -31,9 +31,10 @@ public class MemoryStringBuffer : IStringBuffer
 		}
 		else
 		{
-			if (_memoryOwner.Memory.Length < _offset + length)
+			var requiredLength = _offset + length;
+			if (_memoryOwner.Memory.Length < requiredLength)
 			{
-				var owner = _memoryPool.Rent(_offset + length);
+				var owner = _memoryPool.Rent(requiredLength);
 				_memoryOwner.Memory.CopyTo(owner.Memory);
 				_memoryOwner.Dispose();
 				_memoryOwner = owner;
