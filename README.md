@@ -32,7 +32,7 @@ public static byte[] Compress(string source)
 
 #### Write
 
-Decompress input string with gZip and convert it to string value:
+Decompress an input stream with gZip and convert it to a string value:
 
 ```csharp
 using StreamTools;
