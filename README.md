@@ -66,6 +66,6 @@ public static string Decompress(Stream sourceStream)
 }
 ```
 
-## Benchmarks
+# Benchmarks
 
 You can find [here](src/StreamTools.Benchmarks/README.md).
