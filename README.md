@@ -13,6 +13,15 @@ Or, you can write to a string:
 using Stream outputStream = new StringStream();
 ```
 
+### Key features
+* [High prefomance](src/StreamTools.Benchmarks/README.md) string based stream.
+* Low memory allocation
+* Full support of a .NET stream functionality
+* Multiple buffer allocation drivers:
+	* ArrayPool
+	* MemoryPool
+	* StringBuilder
+
 ### Example
 
 #### Read
