@@ -4,7 +4,11 @@ Yet another one library with .NET streaming helpers.
 ## StringStream
 Simple proxy stream to obrain ability process string data as a stream:
 ```csharp
-using Stream stringStream = new StringStream(source: "some string");
+using Stream inputStream = new StringStream(source: "some string");
+```
+Or, you can write to a string:
+```csharp
+using Stream outputStream = new StringStream();
 ```
 
 ### Example
