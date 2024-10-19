@@ -58,6 +58,6 @@ public sealed class StringBuilderBuffer : IStringBuffer
 
 	public void Dispose()
 	{
-		_stringBuilder?.Clear();
+		// do nothing
 	}
 }
