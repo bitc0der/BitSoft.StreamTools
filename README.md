@@ -9,7 +9,9 @@ using Stream stringStream = new StringStream(source: "some string");
 
 ### Example
 
-For example, generate stream from a string value to compress with GZip:
+#### Read
+
+For example, generate stream from a string value to compress with gZip:
 ```csharp
 using StreamTools;
 using System.IO.Compression;
@@ -25,5 +27,26 @@ public static byte[] Compress(string source)
 	inputStream.CopyTo(gzipStream);
 
 	return outputStream.GetBuffer();
+}
+```
+
+#### Write
+
+Decompress input string with gZip and convert it to string value:
+
+```csharp
+using StreamTools;
+using System.IO.Compression;
+
+public static string Decompress(Stream source)
+{
+	ArgumentNullException.ThrowIfNull(source);
+
+	using var outputStream = new StringStream();
+	using var gZipStream = new GZipStream(sourceStream, CompressionMode.Decompress, leaveOpen: true);
+
+	gZipStream.CopyTo(outputStream);
+
+	return outputStream.GetString();
 }
 ```
