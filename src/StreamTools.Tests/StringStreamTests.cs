@@ -7,15 +7,36 @@ namespace StreamTools.Tests;
 public class StringStreamTests
 {
 	[Test]
-	public void Should_CreateEmpryStream()
+	public void Should_CreateEmpryStreamToRead()
+	{
+		// Arrange
+		const string value = "string";
+
+		// Act
+		using var stream = new StringStream(source: value);
+
+		// Assert
+		Assert.That(stream, Is.Not.Null);
+		Assert.That(stream.Length, Is.EqualTo(value.Length));
+		Assert.That(stream.Position, Is.EqualTo(0));
+		Assert.That(stream.CanRead, Is.EqualTo(true));
+		Assert.That(stream.CanSeek, Is.EqualTo(false));
+		Assert.That(stream.CanWrite, Is.EqualTo(false));
+	}
+
+	[Test]
+	public void Should_CreateEmpryStreamToWrite()
 	{
 		// Act
-		var stream = new StringStream();
+		using var stream = new StringStream();
 
 		// Assert
 		Assert.That(stream, Is.Not.Null);
 		Assert.That(stream.Length, Is.EqualTo(0));
 		Assert.That(stream.Position, Is.EqualTo(0));
+		Assert.That(stream.CanRead, Is.EqualTo(false));
+		Assert.That(stream.CanSeek, Is.EqualTo(false));
+		Assert.That(stream.CanWrite, Is.EqualTo(true));
 	}
 
 	[Test]
@@ -35,6 +56,9 @@ public class StringStreamTests
 		Assert.That(result, Is.EqualTo(str));
 		Assert.That(stream.Length, Is.EqualTo(str.Length));
 		Assert.That(stream.Position, Is.EqualTo(str.Length));
+		Assert.That(stream.CanRead, Is.EqualTo(false));
+		Assert.That(stream.CanSeek, Is.EqualTo(false));
+		Assert.That(stream.CanWrite, Is.EqualTo(false));
 	}
 
 	[Test]
@@ -55,6 +79,9 @@ public class StringStreamTests
 		Assert.That(result, Is.EqualTo(sourceString));
 		Assert.That(stream.Length, Is.EqualTo(result.Length));
 		Assert.That(stream.Position, Is.EqualTo(result.Length));
+		Assert.That(stream.CanRead, Is.EqualTo(false));
+		Assert.That(stream.CanSeek, Is.EqualTo(false));
+		Assert.That(stream.CanWrite, Is.EqualTo(true));
 	}
 
 	private static string CreateString() => Guid.NewGuid().ToString();
