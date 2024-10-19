@@ -6,7 +6,7 @@
 |-------------- |---------:|----------:|---------:|---------:|---------:|---------:|----------:|
 | StringBuilder | 45.01 ms | 18.671 ms | 1.023 ms | 200.0000 | 200.0000 | 200.0000 |    256 MB |
 | ArrayBuilder  | 29.96 ms |  3.201 ms | 0.175 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
-| MemoryBuilder | 30.14 ms |  1.585 ms | 0.087 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |```
+| MemoryBuilder | 30.14 ms |  1.585 ms | 0.087 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
 ```
 
 ## StringStreamBenchmark
@@ -19,7 +19,7 @@
 
 # Legend
 ```text
- Mean      : Arithmetic mean of all measurements
+  Mean      : Arithmetic mean of all measurements
   Error     : Half of 99.9% confidence interval
   StdDev    : Standard deviation of all measurements
   Gen0      : GC Generation 0 collects per 1000 operations
