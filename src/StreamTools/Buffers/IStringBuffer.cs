@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StreamTools;
+namespace StreamTools.Buffers;
 
 public interface IStringBuffer : IDisposable
 {

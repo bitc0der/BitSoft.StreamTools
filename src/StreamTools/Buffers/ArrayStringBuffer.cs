@@ -2,7 +2,7 @@
 using System.Buffers;
 using System.Text;
 
-namespace StreamTools;
+namespace StreamTools.Buffers;
 
 public class ArrayStringBuffer : IStringBuffer
 {

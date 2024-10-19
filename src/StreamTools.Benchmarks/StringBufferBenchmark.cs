@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using StreamTools.Benchmarks.Utils;
+using StreamTools.Buffers;
 using System.Text;
 
 namespace StreamTools.Benchmarks;

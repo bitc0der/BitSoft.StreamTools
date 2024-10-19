@@ -2,7 +2,7 @@
 using System.Buffers;
 using System.Text;
 
-namespace StreamTools;
+namespace StreamTools.Buffers;
 
 public sealed class StringBuilderBuffer : IStringBuffer
 {
@@ -54,6 +54,6 @@ public sealed class StringBuilderBuffer : IStringBuffer
 
 	public void Dispose()
 	{
-		// do nothing
+		_stringBuilder?.Clear();
 	}
 }

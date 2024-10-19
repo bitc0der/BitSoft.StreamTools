@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using StreamTools.Buffers;
 
 namespace StreamTools;
 
