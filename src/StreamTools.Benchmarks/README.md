@@ -2,12 +2,12 @@
 
 ## StringBufferBenchmark
 ```text
-| Method              | Mean     | Error     | StdDev   | Gen0     | Gen1     | Gen2     | Allocated |
-|-------------------- |---------:|----------:|---------:|---------:|---------:|---------:|----------:|
-| StringBuilderBuffer | 47.68 ms | 18.388 ms | 1.008 ms | 222.2222 | 222.2222 | 222.2222 |    256 MB |
-| ArrayStringBuffer   | 31.31 ms |  7.243 ms | 0.397 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
-| MemoryStringBuffer  | 30.67 ms |  0.262 ms | 0.014 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
-| MemoryStream        | 21.12 ms |  3.013 ms | 0.165 ms | 937.5000 | 937.5000 | 937.5000 |    128 MB |
+| Method                  | Mean     | Error     | StdDev   | Gen0     | Gen1     | Gen2     | Allocated |
+|------------------------ |---------:|----------:|---------:|---------:|---------:|---------:|----------:|
+| StringBuilderBuffer     | 42.33 ms | 15.960 ms | 0.875 ms | 272.7273 | 272.7273 | 272.7273 |    256 MB |
+| ArrayStringBuffer       | 30.40 ms |  2.140 ms | 0.117 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
+| MemoryStringBuffer      | 30.35 ms |  0.840 ms | 0.046 ms | 250.0000 | 250.0000 | 250.0000 |    128 MB |
+| Encoding_UTF8_GetString | 21.16 ms |  5.033 ms | 0.276 ms | 937.5000 | 937.5000 | 937.5000 |    128 MB |
 ```
 
 ## StringStreamReadBenchmark
