@@ -1,10 +1,13 @@
 ﻿<Project>
   <PropertyGroup>
     <VersionPrefix>1.0.0</VersionPrefix>
+    <Authors>bitc0der</Authors>
     <Copyright>Copyright 2024 © bitc0der</Copyright>
     <Company>bitc0der</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/bitc0der/StreamTools</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bitc0der/StreamTools</RepositoryUrl>
 
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
