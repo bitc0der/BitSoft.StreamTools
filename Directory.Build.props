@@ -6,8 +6,8 @@
     <Company>bitc0der</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <PackageProjectUrl>https://github.com/bitc0der/StreamTools</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/bitc0der/StreamTools</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/bitc0der/BitSoft.StreamTools</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bitc0der/BitSoft.StreamTools</RepositoryUrl>
 
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
