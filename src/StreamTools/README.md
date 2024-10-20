@@ -55,6 +55,5 @@ public static string Decompress(Stream sourceStream)
 }
 ```
 
-# Info
-
-Please, vitit https://github.com/bitc0der/BitSoft.StreamTools
+# Additional info
+Please, visit https://github.com/bitc0der/BitSoft.StreamTools
