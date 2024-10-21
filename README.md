@@ -1,4 +1,5 @@
 # StreamTools
+[![stable](https://img.shields.io/nuget/v/BitSoft.StreamTools.svg?label=nuget)](https://www.nuget.org/packages/BitSoft.StreamTools/)
 [![build](https://github.com/bitc0der/BitSoft.StreamTools/actions/workflows/build.yml/badge.svg)](https://github.com/bitc0der/BitSoft.StreamTools/actions/workflows/build.yml)
 
 Yet another one library with .NET streaming helpers.
