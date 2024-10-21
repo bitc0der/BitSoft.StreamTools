@@ -1,10 +1,16 @@
 ﻿<Project>
   <PropertyGroup>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.0.0-rc.1</VersionPrefix>
+    <Authors>bitc0der</Authors>
     <Copyright>Copyright 2024 © bitc0der</Copyright>
     <Company>bitc0der</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/bitc0der/StreamTools</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/bitc0der/BitSoft.StreamTools</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bitc0der/BitSoft.StreamTools</RepositoryUrl>
+
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)StreamTools.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
 
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>

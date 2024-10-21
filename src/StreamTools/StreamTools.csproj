@@ -2,12 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>BitSoft.StreamTools</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>bitc0der</Authors>
+    <IsPackable>true</IsPackable>
+    <PackageId>BitSoft.StreamTools</PackageId>
+    <Title>StreamTools: high perfomance streaming tool</Title>
     <Description>Yet another one library with .NET streaming helpers.</Description>
-    <PackageTags>stream;string;</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>stream;string;performance;memory;cache;</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

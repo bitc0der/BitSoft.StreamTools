@@ -1,7 +1,4 @@
 # StreamTools
-[![stable](https://img.shields.io/nuget/v/BitSoft.StreamTools.svg?label=nuget)](https://www.nuget.org/packages/BitSoft.StreamTools/)
-[![build](https://github.com/bitc0der/BitSoft.StreamTools/actions/workflows/build.yml/badge.svg)](https://github.com/bitc0der/BitSoft.StreamTools/actions/workflows/build.yml)
-
 Yet another one library with .NET streaming helpers.
 
 ## StringStream
@@ -13,15 +10,6 @@ Or, you can write to a string:
 ```csharp
 using Stream outputStream = new StringStream();
 ```
-
-### Key features
-* [High prefomance](src/StreamTools.Benchmarks/README.md) string based stream.
-* Low memory allocation
-* Full support of a .NET stream functionality
-* Multiple buffer allocation drivers:
-	* ArrayPool
-	* MemoryPool
-	* StringBuilder
 
 ### Example
 
@@ -67,6 +55,5 @@ public static string Decompress(Stream sourceStream)
 }
 ```
 
-# Benchmarks
-
-You can find [here](src/StreamTools.Benchmarks/README.md).
+# Additional info
+Please, visit https://github.com/bitc0der/BitSoft.StreamTools
