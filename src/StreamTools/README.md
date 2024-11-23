@@ -17,8 +17,8 @@ using Stream outputStream = StringStream.Write();
 
 For example, generate stream from a string value to compress with gZip:
 ```csharp
-using StreamTools;
 using System.IO.Compression;
+using BitSoft.StreamTools;
 
 public static byte[] Compress(string source)
 {
@@ -39,8 +39,8 @@ public static byte[] Compress(string source)
 Decompress an input stream with gZip and convert it to a string value:
 
 ```csharp
-using StreamTools;
 using System.IO.Compression;
+using BitSoft.StreamTools;
 
 public static string Decompress(Stream sourceStream)
 {
