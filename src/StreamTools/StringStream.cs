@@ -81,18 +81,16 @@ public class StringStream : Stream
 
 	public override int Read(byte[] buffer, int offset, int count)
 	{
-		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+		ArgumentNullException.ThrowIfNull(buffer);
 
 		CheckMode(StringStreamMode.Read);
 
-		if (count == 0)
-			return 0;
+		if (count == 0) return 0;
 
 		var maxChars = _encoding.GetMaxCharCount(byteCount: count) - 1;
 		var charsToRead = Math.Min(_source.Length - _offset, maxChars);
 
-		if (charsToRead == 0)
-			return 0;
+		if (charsToRead == 0) return 0;
 
 		var charsSpan = _source.Slice(start: _offset, length: charsToRead).Span;
 		var bytesSpan = buffer.AsSpan(start: offset, length: count);
