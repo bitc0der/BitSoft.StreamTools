@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8; net9</TargetFrameworks>
+    <TargetFramework>net8</TargetFramework>
     <AssemblyName>BitSoft.StreamTools</AssemblyName>
   </PropertyGroup>
 
