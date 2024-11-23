@@ -1,13 +1,14 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System;
+using System.Text;
+using BenchmarkDotNet.Attributes;
 using StreamTools.Benchmarks.Utils;
 using StreamTools.Buffers;
-using System.Text;
 
 namespace StreamTools.Benchmarks;
 
 [ShortRunJob]
 [MemoryDiagnoser]
-public class StringBufferBenchmark
+public class StringBufferWriteBenchmark
 {
 	private byte[]? _bytes;
 
@@ -40,7 +41,7 @@ public class StringBufferBenchmark
 
 	private static string Write(IStringBuffer buffer, byte[] bytes)
 	{
-		buffer.Append(bytes, offset: 0, length: bytes.Length);
+		buffer.Append(bytes.AsMemory());
 		return buffer.Build();
 	}
 }

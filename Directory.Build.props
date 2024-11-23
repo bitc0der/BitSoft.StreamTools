@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <VersionPrefix>1.0.0-rc.1</VersionPrefix>
+    <VersionPrefix>1.0.0-rc.2</VersionPrefix>
     <Authors>bitc0der</Authors>
     <Copyright>Copyright 2024 © bitc0der</Copyright>
     <Company>bitc0der</Company>

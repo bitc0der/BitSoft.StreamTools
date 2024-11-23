@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace StreamTools.Buffers;
@@ -12,21 +13,31 @@ public class ArrayStringBuffer : IStringBuffer
 	private char[]? _array;
 	private int _offset;
 
+	private bool _disposed;
+
 	public ArrayStringBuffer(Encoding? encoding = null, ArrayPool<char>? pool = null)
 	{
 		_pool = pool ?? ArrayPool<char>.Shared;
 		_encoding = encoding ?? Encoding.UTF8;
 	}
 
-	public int Length => _offset;
-
-	public void Append(byte[] buffer, int offset, int length)
+	public int Length
 	{
-		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+		get
+		{
+			CheckDisposed();
+			return _offset;
+		}
+	}
 
-		if (length == 0) return;
+	public void Append(ReadOnlyMemory<byte> buffer)
+	{
+		CheckDisposed();
 
-		var charsCount = _encoding.GetCharCount(buffer, index: offset, count: length);
+		if (buffer.Length == 0)
+			return;
+
+		var charsCount = _encoding.GetCharCount(buffer.Span);
 
 		if (_array is null)
 		{
@@ -35,15 +46,15 @@ public class ArrayStringBuffer : IStringBuffer
 		else
 		{
 			var left = _array.Length - _offset;
-			if (left < length)
+			if (left < buffer.Length)
 			{
-				var newArray = _pool.Rent(minimumLength: _offset + length);
+				var newArray = _pool.Rent(minimumLength: _offset + buffer.Length);
 				Array.Copy(sourceArray: _array, destinationArray: newArray, length: _offset);
 				_pool.Return(_array);
 				_array = newArray;
 			}
 		}
-		var bytesSpan = buffer.AsSpan(start: offset, length: length);
+		var bytesSpan = buffer.Span;
 		var charsSpan = _array.AsSpan(start: _offset, length: charsCount);
 		var result = _encoding.GetChars(bytes: bytesSpan, chars: charsSpan);
 		_offset += result;
@@ -51,17 +62,29 @@ public class ArrayStringBuffer : IStringBuffer
 
 	public string Build()
 	{
+		CheckDisposed();
+
 		return _array is null
 			? string.Empty
 			: new(_array.AsSpan(start: 0, length: _offset));
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void CheckDisposed()
+	{
+		if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+	}
+
 	public void Dispose()
 	{
-		if (_array is null)
-			return;
+		if (_disposed) return;
 
-		_pool.Return(_array);
-		_array = null;
+		if (_array is not null)
+		{
+			_pool.Return(_array);
+			_array = null;
+		}
+
+		_disposed = true;
 	}
 }

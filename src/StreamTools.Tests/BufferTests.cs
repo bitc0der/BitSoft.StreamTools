@@ -29,7 +29,7 @@ public sealed class BufferTests
 		// Act
 		using var buffer = func();
 
-		buffer.Append(buffer: bytes, offset: 0, length: bytes.Length);
+		buffer.Append(buffer: bytes.AsMemory());
 
 		// Assert
 		var result = buffer.Build();

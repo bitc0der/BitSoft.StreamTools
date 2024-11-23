@@ -1,5 +1,5 @@
-﻿using System.IO.Compression;
-using System.IO;
+﻿using System.IO;
+using System.IO.Compression;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using StreamTools.Benchmarks.Utils;
@@ -36,9 +36,9 @@ public class StringStreamReadBenchmark
 	}
 
 	[Benchmark]
-	public void StringStream()
+	public void StringStream_Read()
 	{
-		using var stream = new StringStream(source: _string!);
+		using var stream = StringStream.Read(source: _string!);
 		Compress(stream);
 	}
 

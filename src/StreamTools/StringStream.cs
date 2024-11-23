@@ -3,6 +3,8 @@ using System.Buffers;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using StreamTools.Buffers;
 
 namespace StreamTools;
@@ -17,6 +19,7 @@ public class StringStream : Stream
 	private readonly Encoding _encoding;
 
 	private readonly IStringBuffer? _buffer;
+	private readonly bool _disposeBuffer;
 
 	private int _offset;
 
@@ -32,45 +35,70 @@ public class StringStream : Stream
 		set => Seek(offset: value, SeekOrigin.Begin);
 	}
 
-	public StringStream(string source, Encoding? encoding = null)
-		: this(source: source.AsMemory(), encoding: encoding)
-	{
-		if (source is null) throw new ArgumentNullException(nameof(source));
-	}
-
-	public StringStream(ReadOnlyMemory<char> source, Encoding? encoding = null)
+	private StringStream(ReadOnlyMemory<char> source, Encoding encoding)
 	{
 		_mode = StringStreamMode.Read;
 		_source = source;
-		_encoding = encoding ?? DefaultEncoding;
+		_encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
 	}
 
-	public StringStream(
-		Func<Encoding, IStringBuffer>? stringBuffer = null,
-		Encoding? encoding = null)
+	private StringStream(
+		IStringBuffer stringBuffer,
+		bool disposeBuffer,
+		Encoding encoding)
 	{
 		_mode = StringStreamMode.Write;
-		_encoding = encoding ?? DefaultEncoding;
-		_buffer = stringBuffer is null
-			? new MemoryStringBuffer(_encoding)
-			: stringBuffer(_encoding);
+
+		_buffer = stringBuffer ?? throw new ArgumentNullException(nameof(stringBuffer));
+		_disposeBuffer = disposeBuffer;
+		_encoding = encoding;
 	}
 
-	public static StringStream WithStringBuilder(
+	public static StringStream Read(string source, Encoding? encoding = null)
+	{
+		ArgumentNullException.ThrowIfNull(source);
+
+		return new(source.AsMemory(), GetEncodingOrDefault(encoding));
+	}
+
+	public static StringStream Read(ReadOnlyMemory<char> source, Encoding? encoding = null) => new(source, GetEncodingOrDefault(encoding));
+
+	public static StringStream Write(Encoding? encoding = null) => WriteWithArrayPool(encoding: encoding);
+
+	public static StringStream WriteWithStringBuilder(
 		Encoding? encoding = null,
 		StringBuilder? stringBuilder = null,
-		ArrayPool<char>? arrayPool = null
-	) => new(e => new StringBuilderBuffer(e, stringBuilder, arrayPool), encoding);
+		ArrayPool<char>? arrayPool = null)
+	{
+		encoding = GetEncodingOrDefault(encoding);
+		return new(
+			stringBuffer: new StringBuilderBuffer(encoding, stringBuilder, arrayPool),
+			disposeBuffer: true,
+			encoding: encoding
+		);
+	}
 
-	public static StringStream WithArrayPool(
-		Encoding? encoding = null,
-		ArrayPool<char>? arrayPool = null
-	) => new(e => new ArrayStringBuffer(e, arrayPool), encoding);
+	public static StringStream WriteWithArrayPool(ArrayPool<char>? arrayPool = null, Encoding? encoding = null)
+	{
+		encoding = GetEncodingOrDefault(encoding);
+		return new(
+			stringBuffer: new ArrayStringBuffer(encoding, arrayPool),
+			disposeBuffer: true,
+			encoding: encoding
+		);
+	}
 
-	public static StringStream WithMemoryPool(
-		Encoding? encoding = null,
-		MemoryPool<char>? memoryPool = null
-	) => new(e => new MemoryStringBuffer(e, memoryPool), encoding);
+	public static StringStream WriteWithMemoryPool(MemoryPool<char>? memoryPool = null, Encoding? encoding = null)
+	{
+		encoding = GetEncodingOrDefault(encoding);
+		return new(
+			stringBuffer: new MemoryStringBuffer(encoding, memoryPool),
+			disposeBuffer: true,
+			encoding: encoding
+		);
+	}
+
+	private static Encoding GetEncodingOrDefault(Encoding? encoding) => encoding ?? DefaultEncoding;
 
 	public override void Flush()
 	{
@@ -79,18 +107,16 @@ public class StringStream : Stream
 
 	public override int Read(byte[] buffer, int offset, int count)
 	{
-		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+		ArgumentNullException.ThrowIfNull(buffer);
 
 		CheckMode(StringStreamMode.Read);
 
-		if (count == 0)
-			return 0;
+		if (count == 0) return 0;
 
 		var maxChars = _encoding.GetMaxCharCount(byteCount: count) - 1;
 		var charsToRead = Math.Min(_source.Length - _offset, maxChars);
 
-		if (charsToRead == 0)
-			return 0;
+		if (charsToRead == 0) return 0;
 
 		var charsSpan = _source.Slice(start: _offset, length: charsToRead).Span;
 		var bytesSpan = buffer.AsSpan(start: offset, length: count);
@@ -102,11 +128,41 @@ public class StringStream : Stream
 		return result;
 	}
 
+	public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+	{
+		var result = Read(buffer, offset, count);
+
+		return Task.FromResult(result);
+	}
+
+	public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+	{
+		CheckMode(StringStreamMode.Read);
+
+		if (buffer.Length == 0)
+			return new ValueTask<int>(0);
+
+		var maxChars = _encoding.GetMaxCharCount(byteCount: buffer.Length) - 1;
+		var charsToRead = Math.Min(_source.Length - _offset, maxChars);
+
+		if (charsToRead == 0)
+			return new ValueTask<int>(0);
+
+		var charsSpan = _source.Slice(start: _offset, length: charsToRead).Span;
+		var bytesSpan = buffer.Span;
+
+		var result = _encoding.GetBytes(chars: charsSpan, bytes: bytesSpan);
+
+		_offset += _encoding.GetCharCount(bytes: buffer[..result].Span);
+
+		return new ValueTask<int>(result);
+	}
+
 	public override long Seek(long offset, SeekOrigin origin)
 	{
 		CheckMode(StringStreamMode.Read);
 
-		if (offset < 0 || offset > int.MaxValue)
+		if (offset is < 0 or > int.MaxValue)
 			throw new ArgumentOutOfRangeException(nameof(offset));
 
 		var newOffset = origin switch
@@ -129,7 +185,7 @@ public class StringStream : Stream
 
 	public override void Write(byte[] buffer, int offset, int count)
 	{
-		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+		ArgumentNullException.ThrowIfNull(buffer);
 
 		CheckMode(StringStreamMode.Write);
 
@@ -137,19 +193,43 @@ public class StringStream : Stream
 
 		Debug.Assert(_buffer is not null);
 
-		_buffer.Append(buffer, offset, length: count);
+		var memory = buffer.AsMemory(start: offset, length: count);
+
+		_buffer.Append(memory);
+	}
+
+	public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+	{
+		ArgumentNullException.ThrowIfNull(buffer);
+
+		var memory = buffer.AsMemory(start: offset, length: count);
+
+		await WriteAsync(memory, cancellationToken);
+	}
+
+	public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+	{
+		CheckMode(StringStreamMode.Write);
+
+		Debug.Assert(_buffer is not null);
+
+		_buffer.Append(buffer);
+
+		return ValueTask.CompletedTask;
 	}
 
 	public string GetString()
 	{
-		if (_mode == StringStreamMode.Read)
-			return new string(_source.Span);
-		if (_mode == StringStreamMode.Write)
+		switch (_mode)
 		{
-			Debug.Assert(_buffer is not null);
-			return _buffer.Build();
+			case StringStreamMode.Read:
+				return new string(_source.Span);
+			case StringStreamMode.Write:
+				Debug.Assert(_buffer is not null);
+				return _buffer.Build();
+			default:
+				throw new InvalidOperationException("Unknown mode");
 		}
-		throw new InvalidOperationException("Unknown mode");
 	}
 
 	protected override void Dispose(bool disposing)
@@ -158,7 +238,8 @@ public class StringStream : Stream
 
 		if (_mode == StringStreamMode.Write)
 		{
-			_buffer?.Dispose();
+			if (_disposeBuffer)
+				_buffer?.Dispose();
 		}
 	}
 

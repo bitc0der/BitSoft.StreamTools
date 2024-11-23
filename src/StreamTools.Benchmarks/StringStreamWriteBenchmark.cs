@@ -1,7 +1,7 @@
-﻿using BenchmarkDotNet.Attributes;
-using StreamTools.Benchmarks.Utils;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using BenchmarkDotNet.Attributes;
+using StreamTools.Benchmarks.Utils;
 
 namespace StreamTools.Benchmarks;
 
@@ -18,25 +18,25 @@ public class StringStreamWriteBenchmark
 	}
 
 	[Benchmark]
-	public string StringStream_WithStringBuilder()
+	public string StringStream_WriteWithStringBuilder()
 	{
-		using var stream = StringStream.WithStringBuilder();
+		using var stream = StringStream.WriteWithStringBuilder();
 		_buffer!.DecompressTo(stream);
 		return stream.GetString();
 	}
 
 	[Benchmark]
-	public string StringStream_WithArrayPool()
+	public string StringStream_WriteWithArrayPool()
 	{
-		using var stream = StringStream.WithArrayPool();
+		using var stream = StringStream.WriteWithArrayPool();
 		_buffer!.DecompressTo(stream);
 		return stream.GetString();
 	}
 
 	[Benchmark]
-	public string StringStream_WithMemoryPool()
+	public string StringStream_WriteWithMemoryPool()
 	{
-		using var stream = StringStream.WithMemoryPool();
+		using var stream = StringStream.WriteWithMemoryPool();
 		_buffer!.DecompressTo(stream);
 		return stream.GetString();
 	}

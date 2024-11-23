@@ -1,7 +1,7 @@
-using System.IO;
 using System;
+using System.IO;
 using System.Text;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace StreamTools.Tests;
 
@@ -14,17 +14,18 @@ public class StringStreamTests
 		const string value = "string";
 
 		// Act
-		using var stream = new StringStream(source: value);
+		using var stream = StringStream.Read(source: value);
 
 		// Assert
-		Assert.That(stream, Is.Not.Null);
-		Assert.That(stream.Length, Is.EqualTo(value.Length));
-		Assert.That(stream.Position, Is.EqualTo(0));
-		Assert.That(stream.CanRead, Is.EqualTo(true));
-		Assert.That(stream.CanSeek, Is.EqualTo(true));
-		Assert.That(stream.CanWrite, Is.EqualTo(false));
-
-		Assert.Throws<InvalidOperationException>(() => stream.Write([1, 2, 3]));
+		Assert.Multiple(() =>
+		{
+			Assert.That(stream, Is.Not.Null);
+			Assert.That(stream.Length, Is.EqualTo(value.Length));
+			Assert.That(stream.Position, Is.EqualTo(0));
+			Assert.That(stream.CanRead, Is.EqualTo(true));
+			Assert.That(stream.CanSeek, Is.EqualTo(true));
+			Assert.That(stream.CanWrite, Is.EqualTo(false));
+		});
 
 		var result = stream.GetString();
 
@@ -32,22 +33,38 @@ public class StringStreamTests
 	}
 
 	[Test]
+	public void Should_Throw_When_ReadMode()
+	{
+		// Arrange
+		const string value = "string";
+
+		// Act
+		using var stream = StringStream.Read(source: value);
+
+		// Assert
+		Assert.Throws<InvalidOperationException>(() => stream.Write([1, 2, 3]));
+	}
+
+	[Test]
 	public void Should_CreateEmpryStreamToWrite()
 	{
 		// Act
-		using var stream = new StringStream();
+		using var stream = StringStream.Write();
 
 		// Assert
-		Assert.That(stream, Is.Not.Null);
-		Assert.That(stream.Length, Is.EqualTo(0));
-		Assert.That(stream.Position, Is.EqualTo(0));
-		Assert.That(stream.CanRead, Is.EqualTo(false));
-		Assert.That(stream.CanSeek, Is.EqualTo(false));
-		Assert.That(stream.CanWrite, Is.EqualTo(true));
+		Assert.Multiple(() =>
+		{
+			Assert.That(stream, Is.Not.Null);
+			Assert.That(stream.Length, Is.EqualTo(0));
+			Assert.That(stream.Position, Is.EqualTo(0));
+			Assert.That(stream.CanRead, Is.EqualTo(false));
+			Assert.That(stream.CanSeek, Is.EqualTo(false));
+			Assert.That(stream.CanWrite, Is.EqualTo(true));
+		});
 
 		var buffer = new byte[8];
 
-		Assert.Throws<InvalidOperationException>(() => stream.Read(buffer.AsSpan()));
+		Assert.Throws<InvalidOperationException>(() => stream.ReadExactly(buffer.AsSpan()));
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
 	}
 
@@ -57,20 +74,39 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
 		var result = reader.ReadToEnd();
 
 		// Assert
-		Assert.That(result, Is.Not.Null);
+		Assert.Multiple(() =>
+		{
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result, Is.EqualTo(str));
+			Assert.That(stream.Length, Is.EqualTo(str.Length));
+			Assert.That(stream.Position, Is.EqualTo(str.Length));
+			Assert.That(stream.CanRead, Is.EqualTo(false));
+			Assert.That(stream.CanSeek, Is.EqualTo(true));
+			Assert.That(stream.CanWrite, Is.EqualTo(false));
+		});
+	}
+
+	[Test]
+	public async Task Should_ReadString_When_Async()
+	{
+		// Arrange
+		var str = CreateString();
+
+		using var stream = StringStream.Read(str);
+		using var reader = new StreamReader(stream);
+
+		// Act
+		var result = await reader.ReadToEndAsync();
+
+		// Assert
 		Assert.That(result, Is.EqualTo(str));
-		Assert.That(stream.Length, Is.EqualTo(str.Length));
-		Assert.That(stream.Position, Is.EqualTo(str.Length));
-		Assert.That(stream.CanRead, Is.EqualTo(false));
-		Assert.That(stream.CanSeek, Is.EqualTo(true));
-		Assert.That(stream.CanWrite, Is.EqualTo(false));
 	}
 
 	[Test]
@@ -79,7 +115,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -88,8 +124,12 @@ public class StringStreamTests
 		var result2 = reader.ReadToEnd();
 
 		// Assert
-		Assert.That(result1, Is.EqualTo(str));
-		Assert.That(result2, Is.EqualTo(str));
+		Assert.Multiple(() =>
+		{
+			// Assert
+			Assert.That(result1, Is.EqualTo(str));
+			Assert.That(result2, Is.EqualTo(str));
+		});
 	}
 
 	[Test]
@@ -98,7 +138,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -107,8 +147,12 @@ public class StringStreamTests
 		var result2 = reader.ReadToEnd();
 
 		// Assert
-		Assert.That(result1, Is.EqualTo(str));
-		Assert.That(result2, Is.EqualTo(str));
+		Assert.Multiple(() =>
+		{
+			// Assert
+			Assert.That(result1, Is.EqualTo(str));
+			Assert.That(result2, Is.EqualTo(str));
+		});
 	}
 
 	[Test]
@@ -117,7 +161,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -126,8 +170,12 @@ public class StringStreamTests
 		var result2 = reader.ReadToEnd();
 
 		// Assert
-		Assert.That(result1, Is.EqualTo(str));
-		Assert.That(result2, Is.EqualTo(str));
+		Assert.Multiple(() =>
+		{
+			// Assert
+			Assert.That(result1, Is.EqualTo(str));
+			Assert.That(result2, Is.EqualTo(str));
+		});
 	}
 
 	[Test]
@@ -136,7 +184,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -145,8 +193,12 @@ public class StringStreamTests
 		var result2 = reader.ReadToEnd();
 
 		// Assert
-		Assert.That(result1, Is.EqualTo(str));
-		Assert.That(result2, Is.EqualTo(str.Substring(startIndex: str.Length / 2)));
+		Assert.Multiple(() =>
+		{
+			// Assert
+			Assert.That(result1, Is.EqualTo(str));
+			Assert.That(result2, Is.EqualTo(str[(str.Length / 2)..]));
+		});
 	}
 
 	[Test]
@@ -156,7 +208,7 @@ public class StringStreamTests
 		var sourceString = CreateString();
 		var buffer = Encoding.UTF8.GetBytes(sourceString);
 
-		using var stream = new StringStream();
+		using var stream = StringStream.Write();
 
 		// Act
 		stream.Write(buffer, offset: 0, count: buffer.Length);
@@ -164,13 +216,24 @@ public class StringStreamTests
 		// Assert
 		var result = stream.GetString();
 
-		Assert.That(result, Is.EqualTo(sourceString));
-		Assert.That(stream.Length, Is.EqualTo(result.Length));
-		Assert.That(stream.Position, Is.EqualTo(result.Length));
-		Assert.That(stream.CanRead, Is.EqualTo(false));
-		Assert.That(stream.CanSeek, Is.EqualTo(false));
-		Assert.That(stream.CanWrite, Is.EqualTo(true));
+		Assert.Multiple(() =>
+		{
+			Assert.That(result, Is.EqualTo(sourceString));
+			Assert.That(stream.Length, Is.EqualTo(result.Length));
+			Assert.That(stream.Position, Is.EqualTo(result.Length));
+			Assert.That(stream.CanRead, Is.EqualTo(false));
+			Assert.That(stream.CanSeek, Is.EqualTo(false));
+			Assert.That(stream.CanWrite, Is.EqualTo(true));
+		});
+	}
 
+	[Test]
+	public void Should_Throw_When_WriteMode()
+	{
+		// Arrange
+		using var stream = StringStream.WriteWithArrayPool();
+
+		// Act & Assert
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
 	}
 

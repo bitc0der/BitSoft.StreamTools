@@ -7,11 +7,11 @@ Yet another one library with .NET streaming helpers.
 ## StringStream
 Simple proxy stream to obrain ability process string data as a stream:
 ```csharp
-using Stream inputStream = new StringStream(source: "some string");
+using Stream inputStream = StringStream.Read(source: "some string");
 ```
 Or, you can write to a string:
 ```csharp
-using Stream outputStream = new StringStream();
+using Stream outputStream = StringStream.Write();
 ```
 
 ### Key features
@@ -36,7 +36,7 @@ public static byte[] Compress(string source)
 {
 	ArgumentNullException.ThrowIfNull(source);
 
-	using var inputStream = new StringStream(source);
+	using var inputStream = StringStream.Read(source);
 	using var outputStream = new MemoryStream();
 	using var gzipStream = new GZipStream(outputStream, CompressionMode.Compress);
 
@@ -58,7 +58,7 @@ public static string Decompress(Stream sourceStream)
 {
 	ArgumentNullException.ThrowIfNull(source);
 
-	using var outputStream = new StringStream();
+	using var outputStream = StringStream.Write();
 	using var gZipStream = new GZipStream(sourceStream, CompressionMode.Decompress, leaveOpen: true);
 
 	gZipStream.CopyTo(outputStream);
