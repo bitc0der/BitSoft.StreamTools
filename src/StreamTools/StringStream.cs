@@ -35,12 +35,6 @@ public class StringStream : Stream
 		set => Seek(offset: value, SeekOrigin.Begin);
 	}
 
-	private StringStream(string source, Encoding encoding)
-		: this(source: source.AsMemory(), encoding: encoding)
-	{
-		ArgumentNullException.ThrowIfNull(source);
-	}
-
 	private StringStream(ReadOnlyMemory<char> source, Encoding encoding)
 	{
 		_mode = StringStreamMode.Read;
@@ -62,8 +56,12 @@ public class StringStream : Stream
 
 	public static StringStream Read(string source, Encoding? encoding = null)
 	{
-		return new(source, GetEncodingOrDefault(encoding));
+		ArgumentNullException.ThrowIfNull(source);
+
+		return new(source.AsMemory(), GetEncodingOrDefault(encoding));
 	}
+
+	public static StringStream Read(ReadOnlyMemory<char> source, Encoding? encoding = null) => new(source, GetEncodingOrDefault(encoding));
 
 	public static StringStream Write(Encoding? encoding = null) => WriteWithArrayPool(encoding: encoding);
 
