@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO.Compression;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 
 namespace StreamTools.Benchmarks.Utils;
@@ -11,7 +11,7 @@ internal static class CompressExtensions
 	{
 		ArgumentNullException.ThrowIfNull(source);
 
-		using var inputStream = new StringStream(source: source, encoding);
+		using var inputStream = StringStream.Read(source: source, encoding);
 		using var outputStream = new MemoryStream();
 		using var gZipStream = new GZipStream(outputStream, CompressionMode.Compress, leaveOpen: true);
 

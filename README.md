@@ -36,7 +36,7 @@ public static byte[] Compress(string source)
 {
 	ArgumentNullException.ThrowIfNull(source);
 
-	using var inputStream = new StringStream(source);
+	using var inputStream = StringStream.Read(source);
 	using var outputStream = new MemoryStream();
 	using var gzipStream = new GZipStream(outputStream, CompressionMode.Compress);
 
@@ -58,7 +58,7 @@ public static string Decompress(Stream sourceStream)
 {
 	ArgumentNullException.ThrowIfNull(source);
 
-	using var outputStream = new StringStream();
+	using var outputStream = StringStream.Write();
 	using var gZipStream = new GZipStream(sourceStream, CompressionMode.Decompress, leaveOpen: true);
 
 	gZipStream.CopyTo(outputStream);

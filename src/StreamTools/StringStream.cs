@@ -34,42 +34,45 @@ public class StringStream : Stream
 		set => Seek(offset: value, SeekOrigin.Begin);
 	}
 
-	public StringStream(string source, Encoding? encoding = null)
+	private StringStream(string source, Encoding? encoding = null)
 		: this(source: source.AsMemory(), encoding: encoding)
 	{
 		ArgumentNullException.ThrowIfNull(source);
 	}
 
-	public StringStream(ReadOnlyMemory<char> source, Encoding? encoding = null)
+	private StringStream(ReadOnlyMemory<char> source, Encoding? encoding = null)
 	{
 		_mode = StringStreamMode.Read;
 		_source = source;
 		_encoding = encoding ?? DefaultEncoding;
 	}
 
-	public StringStream(
-		Func<Encoding, IStringBuffer>? stringBuffer = null,
+	private StringStream(
+		Func<Encoding, IStringBuffer> stringBuffer,
 		Encoding? encoding = null)
 	{
 		_mode = StringStreamMode.Write;
+
 		_encoding = encoding ?? DefaultEncoding;
-		_buffer = stringBuffer is null
-			? new MemoryStringBuffer(_encoding)
-			: stringBuffer(_encoding);
+		_buffer = stringBuffer(_encoding);
 	}
 
-	public static StringStream WithStringBuilder(
+	public static StringStream Read(string source, Encoding? encoding = null) => new(source, encoding);
+
+	public static StringStream Write(Encoding? encoding = null) => WriteWithArrayPool(encoding: encoding);
+
+	public static StringStream WriteWithStringBuilder(
 		Encoding? encoding = null,
 		StringBuilder? stringBuilder = null,
 		ArrayPool<char>? arrayPool = null
 	) => new(e => new StringBuilderBuffer(e, stringBuilder, arrayPool), encoding);
 
-	public static StringStream WithArrayPool(
+	public static StringStream WriteWithArrayPool(
 		Encoding? encoding = null,
 		ArrayPool<char>? arrayPool = null
 	) => new(e => new ArrayStringBuffer(e, arrayPool), encoding);
 
-	public static StringStream WithMemoryPool(
+	public static StringStream WriteWithMemoryPool(
 		Encoding? encoding = null,
 		MemoryPool<char>? memoryPool = null
 	) => new(e => new MemoryStringBuffer(e, memoryPool), encoding);
@@ -194,14 +197,16 @@ public class StringStream : Stream
 
 	public string GetString()
 	{
-		if (_mode == StringStreamMode.Read)
-			return new string(_source.Span);
-		if (_mode == StringStreamMode.Write)
+		switch (_mode)
 		{
-			Debug.Assert(_buffer is not null);
-			return _buffer.Build();
+			case StringStreamMode.Read:
+				return new string(_source.Span);
+			case StringStreamMode.Write:
+				Debug.Assert(_buffer is not null);
+				return _buffer.Build();
+			default:
+				throw new InvalidOperationException("Unknown mode");
 		}
-		throw new InvalidOperationException("Unknown mode");
 	}
 
 	protected override void Dispose(bool disposing)

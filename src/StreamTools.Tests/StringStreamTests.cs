@@ -14,7 +14,7 @@ public class StringStreamTests
 		const string value = "string";
 
 		// Act
-		using var stream = new StringStream(source: value);
+		using var stream = StringStream.Read(source: value);
 
 		// Assert
 		Assert.Multiple(() =>
@@ -39,7 +39,7 @@ public class StringStreamTests
 		const string value = "string";
 
 		// Act
-		using var stream = new StringStream(source: value);
+		using var stream = StringStream.Read(source: value);
 
 		// Assert
 		Assert.Throws<InvalidOperationException>(() => stream.Write([1, 2, 3]));
@@ -49,7 +49,7 @@ public class StringStreamTests
 	public void Should_CreateEmpryStreamToWrite()
 	{
 		// Act
-		using var stream = new StringStream();
+		using var stream = StringStream.Write();
 
 		// Assert
 		Assert.Multiple(() =>
@@ -74,7 +74,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -99,7 +99,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -115,7 +115,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -138,7 +138,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -161,7 +161,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -184,7 +184,7 @@ public class StringStreamTests
 		// Arrange
 		var str = CreateString();
 
-		using var stream = new StringStream(str);
+		using var stream = StringStream.Read(str);
 		using var reader = new StreamReader(stream);
 
 		// Act
@@ -197,7 +197,7 @@ public class StringStreamTests
 		{
 			// Assert
 			Assert.That(result1, Is.EqualTo(str));
-			Assert.That(result2, Is.EqualTo(str.Substring(startIndex: str.Length / 2)));
+			Assert.That(result2, Is.EqualTo(str[(str.Length / 2)..]));
 		});
 	}
 
@@ -208,7 +208,7 @@ public class StringStreamTests
 		var sourceString = CreateString();
 		var buffer = Encoding.UTF8.GetBytes(sourceString);
 
-		using var stream = new StringStream();
+		using var stream = StringStream.Write();
 
 		// Act
 		stream.Write(buffer, offset: 0, count: buffer.Length);
@@ -231,7 +231,7 @@ public class StringStreamTests
 	public void Should_Throw_When_WriteMode()
 	{
 		// Arrange
-		using var stream = StringStream.WithArrayPool();
+		using var stream = StringStream.WriteWithArrayPool();
 
 		// Act & Assert
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
