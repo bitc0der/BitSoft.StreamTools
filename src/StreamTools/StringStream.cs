@@ -111,6 +111,29 @@ public class StringStream : Stream
 		return Task.FromResult(result);
 	}
 
+	public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+	{
+		CheckMode(StringStreamMode.Read);
+
+		if (buffer.Length == 0)
+			return new ValueTask<int>(0);
+
+		var maxChars = _encoding.GetMaxCharCount(byteCount: buffer.Length) - 1;
+		var charsToRead = Math.Min(_source.Length - _offset, maxChars);
+
+		if (charsToRead == 0)
+			return new ValueTask<int>(0);
+
+		var charsSpan = _source.Slice(start: _offset, length: charsToRead).Span;
+		var bytesSpan = buffer.Span;
+
+		var result = _encoding.GetBytes(chars: charsSpan, bytes: bytesSpan);
+
+		_offset += _encoding.GetCharCount(bytes: buffer[..result].Span);
+
+		return new ValueTask<int>(result);
+	}
+
 	public override long Seek(long offset, SeekOrigin origin)
 	{
 		CheckMode(StringStreamMode.Read);
