@@ -1,14 +1,14 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System;
+using System.Text;
+using BenchmarkDotNet.Attributes;
 using StreamTools.Benchmarks.Utils;
 using StreamTools.Buffers;
-using System;
-using System.Text;
 
 namespace StreamTools.Benchmarks;
 
 [ShortRunJob]
 [MemoryDiagnoser]
-public class StringBufferBenchmark
+public class StringBufferWriteBenchmark
 {
 	private byte[]? _bytes;
 
