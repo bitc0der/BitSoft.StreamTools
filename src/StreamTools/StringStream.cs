@@ -19,6 +19,7 @@ public class StringStream : Stream
 	private readonly Encoding _encoding;
 
 	private readonly IStringBuffer? _buffer;
+	private readonly bool _disposeBuffer;
 
 	private int _offset;
 
@@ -34,48 +35,72 @@ public class StringStream : Stream
 		set => Seek(offset: value, SeekOrigin.Begin);
 	}
 
-	private StringStream(string source, Encoding? encoding = null)
+	private StringStream(string source, Encoding encoding)
 		: this(source: source.AsMemory(), encoding: encoding)
 	{
 		ArgumentNullException.ThrowIfNull(source);
 	}
 
-	private StringStream(ReadOnlyMemory<char> source, Encoding? encoding = null)
+	private StringStream(ReadOnlyMemory<char> source, Encoding encoding)
 	{
 		_mode = StringStreamMode.Read;
 		_source = source;
-		_encoding = encoding ?? DefaultEncoding;
+		_encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
 	}
 
 	private StringStream(
-		Func<Encoding, IStringBuffer> stringBuffer,
-		Encoding? encoding = null)
+		IStringBuffer stringBuffer,
+		bool disposeBuffer,
+		Encoding encoding)
 	{
 		_mode = StringStreamMode.Write;
 
-		_encoding = encoding ?? DefaultEncoding;
-		_buffer = stringBuffer(_encoding);
+		_buffer = stringBuffer ?? throw new ArgumentNullException(nameof(stringBuffer));
+		_disposeBuffer = disposeBuffer;
+		_encoding = encoding;
 	}
 
-	public static StringStream Read(string source, Encoding? encoding = null) => new(source, encoding);
+	public static StringStream Read(string source, Encoding? encoding = null)
+	{
+		return new(source, GetEncodingOrDefault(encoding));
+	}
 
 	public static StringStream Write(Encoding? encoding = null) => WriteWithArrayPool(encoding: encoding);
 
 	public static StringStream WriteWithStringBuilder(
 		Encoding? encoding = null,
 		StringBuilder? stringBuilder = null,
-		ArrayPool<char>? arrayPool = null
-	) => new(e => new StringBuilderBuffer(e, stringBuilder, arrayPool), encoding);
+		ArrayPool<char>? arrayPool = null)
+	{
+		encoding = GetEncodingOrDefault(encoding);
+		return new(
+			stringBuffer: new StringBuilderBuffer(encoding, stringBuilder, arrayPool),
+			disposeBuffer: true,
+			encoding: encoding
+		);
+	}
 
-	public static StringStream WriteWithArrayPool(
-		Encoding? encoding = null,
-		ArrayPool<char>? arrayPool = null
-	) => new(e => new ArrayStringBuffer(e, arrayPool), encoding);
+	public static StringStream WriteWithArrayPool(ArrayPool<char>? arrayPool = null, Encoding? encoding = null)
+	{
+		encoding = GetEncodingOrDefault(encoding);
+		return new(
+			stringBuffer: new ArrayStringBuffer(encoding, arrayPool),
+			disposeBuffer: true,
+			encoding: encoding
+		);
+	}
 
-	public static StringStream WriteWithMemoryPool(
-		Encoding? encoding = null,
-		MemoryPool<char>? memoryPool = null
-	) => new(e => new MemoryStringBuffer(e, memoryPool), encoding);
+	public static StringStream WriteWithMemoryPool(MemoryPool<char>? memoryPool = null, Encoding? encoding = null)
+	{
+		encoding = GetEncodingOrDefault(encoding);
+		return new(
+			stringBuffer: new MemoryStringBuffer(encoding, memoryPool),
+			disposeBuffer: true,
+			encoding: encoding
+		);
+	}
+
+	private static Encoding GetEncodingOrDefault(Encoding? encoding) => encoding ?? DefaultEncoding;
 
 	public override void Flush()
 	{
@@ -215,7 +240,8 @@ public class StringStream : Stream
 
 		if (_mode == StringStreamMode.Write)
 		{
-			_buffer?.Dispose();
+			if (_disposeBuffer)
+				_buffer?.Dispose();
 		}
 	}
 
