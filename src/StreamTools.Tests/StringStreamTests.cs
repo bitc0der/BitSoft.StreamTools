@@ -1,7 +1,6 @@
 using System.IO;
 using System;
 using System.Text;
-using System.Linq;
 
 namespace StreamTools.Tests;
 
@@ -47,7 +46,7 @@ public class StringStreamTests
 
 		var buffer = new byte[8];
 
-		Assert.Throws<InvalidOperationException>(() => stream.Read(buffer.AsSpan()));
+		Assert.Throws<InvalidOperationException>(() => stream.ReadExactly(buffer.AsSpan()));
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
 	}
 

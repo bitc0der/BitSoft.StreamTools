@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace StreamTools.Buffers;
@@ -12,17 +13,28 @@ public class MemoryStringBuffer : IStringBuffer
 	private IMemoryOwner<char>? _memoryOwner;
 	private int _offset;
 
+	private bool _disposed;
+
+	public int Length
+	{
+		get
+		{
+			CheckDisposed();
+			return _offset;
+		}
+	}
+
 	public MemoryStringBuffer(Encoding? encoding = null, MemoryPool<char>? memoryPool = null)
 	{
 		_encoding = encoding ?? Encoding.UTF8;
 		_memoryPool = memoryPool ?? MemoryPool<char>.Shared;
 	}
 
-	public int Length => _offset;
-
 	public void Append(byte[] buffer, int offset, int length)
 	{
 		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+
+		CheckDisposed();
 
 		if (length == 0)
 			return;
@@ -54,13 +66,29 @@ public class MemoryStringBuffer : IStringBuffer
 
 	public string Build()
 	{
+		CheckDisposed();
+
 		return _memoryOwner is null
 			? string.Empty
 			: new string(_memoryOwner.Memory.Span[0.._offset]);
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void CheckDisposed()
+	{
+		if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+	}
+
 	public void Dispose()
 	{
-		_memoryOwner?.Dispose();
+		if (_disposed) return;
+
+		if (_memoryOwner is not null)
+		{
+			_memoryOwner?.Dispose();
+			_memoryOwner = null;
+		}
+
+		_disposed = true;
 	}
 }
