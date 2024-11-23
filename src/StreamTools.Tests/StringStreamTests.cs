@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StreamTools.Tests;
 
@@ -90,6 +91,22 @@ public class StringStreamTests
 			Assert.That(stream.CanSeek, Is.EqualTo(true));
 			Assert.That(stream.CanWrite, Is.EqualTo(false));
 		});
+	}
+
+	[Test]
+	public async Task Should_ReadString_When_Async()
+	{
+		// Arrange
+		var str = CreateString();
+
+		using var stream = new StringStream(str);
+		using var reader = new StreamReader(stream);
+
+		// Act
+		var result = await reader.ReadToEndAsync();
+
+		// Assert
+		Assert.That(result, Is.EqualTo(str));
 	}
 
 	[Test]

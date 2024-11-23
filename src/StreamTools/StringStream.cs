@@ -3,6 +3,8 @@ using System.Buffers;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using StreamTools.Buffers;
 
 namespace StreamTools;
@@ -100,6 +102,13 @@ public class StringStream : Stream
 		_offset += _encoding.GetCharCount(bytes: buffer, index: offset, count: result);
 
 		return result;
+	}
+
+	public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+	{
+		var result = Read(buffer, offset, count);
+
+		return Task.FromResult(result);
 	}
 
 	public override long Seek(long offset, SeekOrigin origin)
