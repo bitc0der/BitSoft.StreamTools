@@ -37,7 +37,7 @@ public class StringStream : Stream
 	public StringStream(string source, Encoding? encoding = null)
 		: this(source: source.AsMemory(), encoding: encoding)
 	{
-		if (source is null) throw new ArgumentNullException(nameof(source));
+		ArgumentNullException.ThrowIfNull(source);
 	}
 
 	public StringStream(ReadOnlyMemory<char> source, Encoding? encoding = null)
@@ -138,7 +138,7 @@ public class StringStream : Stream
 	{
 		CheckMode(StringStreamMode.Read);
 
-		if (offset < 0 || offset > int.MaxValue)
+		if (offset is < 0 or > int.MaxValue)
 			throw new ArgumentOutOfRangeException(nameof(offset));
 
 		var newOffset = origin switch
@@ -161,7 +161,7 @@ public class StringStream : Stream
 
 	public override void Write(byte[] buffer, int offset, int count)
 	{
-		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+		ArgumentNullException.ThrowIfNull(buffer);
 
 		CheckMode(StringStreamMode.Write);
 
@@ -169,7 +169,29 @@ public class StringStream : Stream
 
 		Debug.Assert(_buffer is not null);
 
-		_buffer.Append(buffer, offset, length: count);
+		var memory = buffer.AsMemory(start: offset, length: count);
+
+		_buffer.Append(memory);
+	}
+
+	public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+	{
+		ArgumentNullException.ThrowIfNull(buffer);
+
+		var memory = buffer.AsMemory(start: offset, length: count);
+
+		await WriteAsync(memory, cancellationToken);
+	}
+
+	public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+	{
+		CheckMode(StringStreamMode.Write);
+
+		Debug.Assert(_buffer is not null);
+
+		_buffer.Append(buffer);
+
+		return ValueTask.CompletedTask;
 	}
 
 	public string GetString()

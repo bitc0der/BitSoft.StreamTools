@@ -25,13 +25,12 @@ public sealed class StringBuilderBuffer : IStringBuffer
 		? 0
 		: _stringBuilder.Length;
 
-	public void Append(byte[] buffer, int offset, int length)
+	public void Append(ReadOnlyMemory<byte> buffer)
 	{
-		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
+		if (buffer.Length == 0) return;
 
-		if (length == 0) return;
-
-		var charsCount = _encoding.GetCharCount(buffer, index: offset, count: length);
+		var bufferSpan = buffer.Span;
+		var charsCount = _encoding.GetCharCount(bufferSpan);
 
 		if (_stringBuilder is null)
 			_stringBuilder = new StringBuilder(capacity: charsCount);
@@ -40,7 +39,7 @@ public sealed class StringBuilderBuffer : IStringBuffer
 
 		try
 		{
-			var result = _encoding.GetChars(bytes: buffer, chars: array);
+			var result = _encoding.GetChars(bytes: bufferSpan, chars: array);
 
 			var span = array.AsSpan(start: 0, length: result);
 

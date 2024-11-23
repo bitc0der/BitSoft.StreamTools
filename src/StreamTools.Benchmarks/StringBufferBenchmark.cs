@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using StreamTools.Benchmarks.Utils;
 using StreamTools.Buffers;
+using System;
 using System.Text;
 
 namespace StreamTools.Benchmarks;
@@ -40,7 +41,7 @@ public class StringBufferBenchmark
 
 	private static string Write(IStringBuffer buffer, byte[] bytes)
 	{
-		buffer.Append(bytes, offset: 0, length: bytes.Length);
+		buffer.Append(bytes.AsMemory());
 		return buffer.Build();
 	}
 }

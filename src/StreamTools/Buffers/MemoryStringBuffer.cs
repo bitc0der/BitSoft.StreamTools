@@ -30,22 +30,19 @@ public class MemoryStringBuffer : IStringBuffer
 		_memoryPool = memoryPool ?? MemoryPool<char>.Shared;
 	}
 
-	public void Append(byte[] buffer, int offset, int length)
+	public void Append(ReadOnlyMemory<byte> buffer)
 	{
-		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
-
 		CheckDisposed();
 
-		if (length == 0)
-			return;
+		if (buffer.Length == 0) return;
 
 		if (_memoryOwner is null)
 		{
-			_memoryOwner = _memoryPool.Rent(minBufferSize: length);
+			_memoryOwner = _memoryPool.Rent(minBufferSize: buffer.Length);
 		}
 		else
 		{
-			var requiredLength = _offset + length;
+			var requiredLength = _offset + buffer.Length;
 			if (_memoryOwner.Memory.Length < requiredLength)
 			{
 				var owner = _memoryPool.Rent(requiredLength);
@@ -55,9 +52,9 @@ public class MemoryStringBuffer : IStringBuffer
 			}
 		}
 
-		var charsCount = _encoding.GetCharCount(buffer, offset, length);
-		var bytesSpan = buffer.AsSpan(start: offset, length: length);
-		var charsSpan = _memoryOwner.Memory.Span.Slice(start: offset, length: charsCount);
+		var bytesSpan = buffer.Span;
+		var charsCount = _encoding.GetCharCount(bytesSpan);
+		var charsSpan = _memoryOwner.Memory.Span.Slice(start: _offset, length: charsCount);
 
 		var result = _encoding.GetChars(bytes: bytesSpan, chars: charsSpan);
 
@@ -74,10 +71,7 @@ public class MemoryStringBuffer : IStringBuffer
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void CheckDisposed()
-	{
-		if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-	}
+	private void CheckDisposed() => ObjectDisposedException.ThrowIf(_disposed, instance: this);
 
 	public void Dispose()
 	{

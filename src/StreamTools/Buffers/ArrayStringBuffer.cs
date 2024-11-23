@@ -30,15 +30,14 @@ public class ArrayStringBuffer : IStringBuffer
 		}
 	}
 
-	public void Append(byte[] buffer, int offset, int length)
+	public void Append(ReadOnlyMemory<byte> buffer)
 	{
-		if (buffer is null) throw new ArgumentNullException(nameof(buffer));
-
 		CheckDisposed();
 
-		if (length == 0) return;
+		if (buffer.Length == 0)
+			return;
 
-		var charsCount = _encoding.GetCharCount(buffer, index: offset, count: length);
+		var charsCount = _encoding.GetCharCount(buffer.Span);
 
 		if (_array is null)
 		{
@@ -47,15 +46,15 @@ public class ArrayStringBuffer : IStringBuffer
 		else
 		{
 			var left = _array.Length - _offset;
-			if (left < length)
+			if (left < buffer.Length)
 			{
-				var newArray = _pool.Rent(minimumLength: _offset + length);
+				var newArray = _pool.Rent(minimumLength: _offset + buffer.Length);
 				Array.Copy(sourceArray: _array, destinationArray: newArray, length: _offset);
 				_pool.Return(_array);
 				_array = newArray;
 			}
 		}
-		var bytesSpan = buffer.AsSpan(start: offset, length: length);
+		var bytesSpan = buffer.Span;
 		var charsSpan = _array.AsSpan(start: _offset, length: charsCount);
 		var result = _encoding.GetChars(bytes: bytesSpan, chars: charsSpan);
 		_offset += result;
