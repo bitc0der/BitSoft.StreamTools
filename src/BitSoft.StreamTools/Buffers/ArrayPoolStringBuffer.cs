@@ -54,8 +54,8 @@ public class ArrayPoolStringBuffer : IStringBuffer
 				_array = newArray;
 			}
 		}
-		var charsSpan = _array.AsSpan(start: _offset);
-		_offset += _encoding.GetChars(bytes: buffer.Span, chars: charsSpan);
+		
+		_offset += _encoding.GetChars(bytes: buffer.Span, chars: _array.AsSpan(start: _offset));
 	}
 
 	public string Build()

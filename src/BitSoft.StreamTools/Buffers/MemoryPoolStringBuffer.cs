@@ -54,9 +54,7 @@ public class MemoryPoolStringBuffer : IStringBuffer
 			}
 		}
 
-		var actualCharsCount = _encoding.GetChars(bytes: buffer.Span, chars: _memoryOwner.Memory.Span[_offset..]);
-
-		_offset += actualCharsCount;
+		_offset += _encoding.GetChars(bytes: buffer.Span, chars: _memoryOwner.Memory.Span[_offset..]);
 	}
 
 	public string Build()

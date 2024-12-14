@@ -37,6 +37,13 @@ public class StringBufferWriteBenchmark
 	}
 
 	[Benchmark]
+	public string ArrayPoolQueueStringBuffer()
+	{
+		using var buffer = new ArrayPoolQueueStringBuffer();
+		return Write(buffer, _bytes!);
+	}
+
+	[Benchmark]
 	public string Encoding_UTF8_GetString() => Encoding.UTF8.GetString(_bytes!);
 
 	private static string Write(IStringBuffer buffer, byte[] bytes)

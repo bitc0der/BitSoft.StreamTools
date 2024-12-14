@@ -43,6 +43,7 @@ public sealed class BufferTests
 		yield return new TestCaseData(() => new StringBuilderBuffer());
 		yield return new TestCaseData(() => new ArrayPoolStringBuffer());
 		yield return new TestCaseData(() => new MemoryPoolStringBuffer());
+		yield return new TestCaseData(() => new ArrayPoolQueueStringBuffer());
 	}
 
 	private enum Buffer
