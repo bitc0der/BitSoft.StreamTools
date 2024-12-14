@@ -237,5 +237,25 @@ public class StringStreamTests
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
 	}
 
+	[TestCase("Source", true)]
+	[TestCase("Source", false)]
+	public async Task Should_ReturnSameString(string source, bool async)
+	{
+		// Arrange
+		using var read = StringStream.Read(source);
+		using var write = StringStream.Write();
+
+		// Act
+		if (async)
+			await read.CopyToAsync(write);
+		else
+			read.CopyTo(write);
+
+		// Assert
+		var result = write.GetString();
+
+		Assert.That(result, Is.EqualTo(source));
+	}
+
 	private static string CreateString() => Guid.NewGuid().ToString();
 }
