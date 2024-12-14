@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BitSoft.StreamTools.Buffers;
 
-public class MemoryStringBuffer : IStringBuffer
+public class MemoryPoolStringBuffer : IStringBuffer
 {
 	private readonly Encoding _encoding;
 	private readonly MemoryPool<char> _memoryPool;
@@ -24,7 +24,7 @@ public class MemoryStringBuffer : IStringBuffer
 		}
 	}
 
-	public MemoryStringBuffer(Encoding? encoding = null, MemoryPool<char>? memoryPool = null)
+	public MemoryPoolStringBuffer(Encoding? encoding = null, MemoryPool<char>? memoryPool = null)
 	{
 		_encoding = encoding ?? Encoding.UTF8;
 		_memoryPool = memoryPool ?? MemoryPool<char>.Shared;
@@ -36,13 +36,15 @@ public class MemoryStringBuffer : IStringBuffer
 
 		if (buffer.Length == 0) return;
 
+		var maxCharsCount = _encoding.GetMaxCharCount(buffer.Length);
+
 		if (_memoryOwner is null)
 		{
-			_memoryOwner = _memoryPool.Rent(minBufferSize: buffer.Length);
+			_memoryOwner = _memoryPool.Rent(minBufferSize: maxCharsCount);
 		}
 		else
 		{
-			var requiredLength = _offset + buffer.Length;
+			var requiredLength = _offset + maxCharsCount;
 			if (_memoryOwner.Memory.Length < requiredLength)
 			{
 				var owner = _memoryPool.Rent(requiredLength);
@@ -52,13 +54,9 @@ public class MemoryStringBuffer : IStringBuffer
 			}
 		}
 
-		var bytesSpan = buffer.Span;
-		var charsCount = _encoding.GetCharCount(bytesSpan);
-		var charsSpan = _memoryOwner.Memory.Span.Slice(start: _offset, length: charsCount);
+		var actualCharsCount = _encoding.GetChars(bytes: buffer.Span, chars: _memoryOwner.Memory.Span[_offset..]);
 
-		var result = _encoding.GetChars(bytes: bytesSpan, chars: charsSpan);
-
-		_offset += result;
+		_offset += actualCharsCount;
 	}
 
 	public string Build()

@@ -82,7 +82,7 @@ public class StringStream : Stream
 	{
 		encoding = GetEncodingOrDefault(encoding);
 		return new(
-			stringBuffer: new ArrayStringBuffer(encoding, arrayPool),
+			stringBuffer: new ArrayPoolStringBuffer(encoding, arrayPool),
 			disposeBuffer: true,
 			encoding: encoding
 		);
@@ -92,7 +92,7 @@ public class StringStream : Stream
 	{
 		encoding = GetEncodingOrDefault(encoding);
 		return new(
-			stringBuffer: new MemoryStringBuffer(encoding, memoryPool),
+			stringBuffer: new MemoryPoolStringBuffer(encoding, memoryPool),
 			disposeBuffer: true,
 			encoding: encoding
 		);

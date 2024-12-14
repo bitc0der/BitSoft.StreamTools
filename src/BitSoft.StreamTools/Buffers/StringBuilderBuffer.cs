@@ -32,8 +32,7 @@ public sealed class StringBuilderBuffer : IStringBuffer
 		var bufferSpan = buffer.Span;
 		var charsCount = _encoding.GetCharCount(bufferSpan);
 
-		if (_stringBuilder is null)
-			_stringBuilder = new StringBuilder(capacity: charsCount);
+		_stringBuilder ??= new StringBuilder(capacity: charsCount);
 
 		var array = _pool.Rent(minimumLength: charsCount);
 

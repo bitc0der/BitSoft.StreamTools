@@ -41,8 +41,8 @@ public sealed class BufferTests
 	private static IEnumerable<TestCaseData> GetBuffers()
 	{
 		yield return new TestCaseData(() => new StringBuilderBuffer());
-		yield return new TestCaseData(() => new ArrayStringBuffer());
-		yield return new TestCaseData(() => new MemoryStringBuffer());
+		yield return new TestCaseData(() => new ArrayPoolStringBuffer());
+		yield return new TestCaseData(() => new MemoryPoolStringBuffer());
 	}
 
 	private enum Buffer

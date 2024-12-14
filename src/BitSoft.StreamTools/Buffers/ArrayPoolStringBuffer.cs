@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BitSoft.StreamTools.Buffers;
 
-public class ArrayStringBuffer : IStringBuffer
+public class ArrayPoolStringBuffer : IStringBuffer
 {
 	private readonly Encoding _encoding;
 	private readonly ArrayPool<char> _pool;
@@ -15,7 +15,7 @@ public class ArrayStringBuffer : IStringBuffer
 
 	private bool _disposed;
 
-	public ArrayStringBuffer(Encoding? encoding = null, ArrayPool<char>? pool = null)
+	public ArrayPoolStringBuffer(Encoding? encoding = null, ArrayPool<char>? pool = null)
 	{
 		_pool = pool ?? ArrayPool<char>.Shared;
 		_encoding = encoding ?? Encoding.UTF8;
@@ -37,27 +37,25 @@ public class ArrayStringBuffer : IStringBuffer
 		if (buffer.Length == 0)
 			return;
 
-		var charsCount = _encoding.GetCharCount(buffer.Span);
+		var maxCharsCount = _encoding.GetMaxCharCount(buffer.Length);
 
 		if (_array is null)
 		{
-			_array = _pool.Rent(minimumLength: charsCount);
+			_array = _pool.Rent(minimumLength: maxCharsCount);
 		}
 		else
 		{
-			var left = _array.Length - _offset;
-			if (left < buffer.Length)
+			var leftChars = _array.Length - _offset;
+			if (leftChars < maxCharsCount)
 			{
-				var newArray = _pool.Rent(minimumLength: _offset + buffer.Length);
+				var newArray = _pool.Rent(minimumLength: _offset + maxCharsCount);
 				Array.Copy(sourceArray: _array, destinationArray: newArray, length: _offset);
 				_pool.Return(_array);
 				_array = newArray;
 			}
 		}
-		var bytesSpan = buffer.Span;
-		var charsSpan = _array.AsSpan(start: _offset, length: charsCount);
-		var result = _encoding.GetChars(bytes: bytesSpan, chars: charsSpan);
-		_offset += result;
+		var charsSpan = _array.AsSpan(start: _offset);
+		_offset += _encoding.GetChars(bytes: buffer.Span, chars: charsSpan);
 	}
 
 	public string Build()

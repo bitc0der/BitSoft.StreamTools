@@ -25,14 +25,14 @@ public class StringBufferWriteBenchmark
 	[Benchmark]
 	public string ArrayStringBuffer()
 	{
-		using var buffer = new ArrayStringBuffer();
+		using var buffer = new ArrayPoolStringBuffer();
 		return Write(buffer, _bytes!);
 	}
 
 	[Benchmark]
 	public string MemoryStringBuffer()
 	{
-		using var buffer = new MemoryStringBuffer();
+		using var buffer = new MemoryPoolStringBuffer();
 		return Write(buffer, _bytes!);
 	}
 
