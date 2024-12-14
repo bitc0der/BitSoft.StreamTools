@@ -5,9 +5,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using StreamTools.Buffers;
+using BitSoft.StreamTools.Buffers;
 
-namespace StreamTools;
+namespace BitSoft.StreamTools;
 
 public class StringStream : Stream
 {

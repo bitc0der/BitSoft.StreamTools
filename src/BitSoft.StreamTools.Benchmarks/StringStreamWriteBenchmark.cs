@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
-using StreamTools.Benchmarks.Utils;
+using BitSoft.StreamTools.Benchmarks.Utils;
 
-namespace StreamTools.Benchmarks;
+namespace BitSoft.StreamTools.Benchmarks;
 
 [ShortRunJob]
 [MemoryDiagnoser]
