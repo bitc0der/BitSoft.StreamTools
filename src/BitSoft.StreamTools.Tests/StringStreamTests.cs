@@ -239,6 +239,8 @@ public class StringStreamTests
 
 	[TestCase("Source", true, 16)]
 	[TestCase("Source", false, 16)]
+	[TestCase("a", true, 16)]
+	[TestCase("a", false, 16)]
 	public async Task Should_ReturnSameString(string source, bool async, int bufferSize)
 	{
 		// Arrange
