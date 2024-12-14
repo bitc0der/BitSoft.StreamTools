@@ -69,4 +69,4 @@ public static string Decompress(Stream sourceStream)
 
 # Benchmarks
 
-You can find [here](src/StreamTools.Benchmarks/README.md).
+You can find [here](src/BitSoft.StreamTools.Benchmarks/README.md).
