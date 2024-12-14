@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace StreamTools.Benchmarks.Utils;
+namespace BitSoft.StreamTools.Benchmarks.Utils;
 
 internal static class Create
 {
@@ -21,8 +21,8 @@ internal static class Create
 	{
 		var result = new byte[length];
 
-		const int min = (int)'a';
-		const int max = (int)'z';
+		const int min = 'a';
+		const int max = 'z';
 
 		var random = new Random();
 		for (var i = 0; i < length; i++)

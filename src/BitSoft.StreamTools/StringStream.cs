@@ -5,9 +5,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using StreamTools.Buffers;
+using BitSoft.StreamTools.Buffers;
 
-namespace StreamTools;
+namespace BitSoft.StreamTools;
 
 public class StringStream : Stream
 {
@@ -23,7 +23,7 @@ public class StringStream : Stream
 
 	private int _offset;
 
-	public override bool CanRead => _mode == StringStreamMode.Read && _offset < _source.Length - 1;
+	public override bool CanRead => _mode == StringStreamMode.Read && _offset < _source.Length;
 	public override bool CanSeek => _mode == StringStreamMode.Read;
 	public override bool CanWrite => _mode == StringStreamMode.Write;
 

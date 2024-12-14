@@ -2,7 +2,7 @@
 using System.Buffers;
 using System.Text;
 
-namespace StreamTools.Buffers;
+namespace BitSoft.StreamTools.Buffers;
 
 public sealed class StringBuilderBuffer : IStringBuffer
 {

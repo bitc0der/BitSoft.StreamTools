@@ -1,9 +1,9 @@
-﻿using StreamTools.Buffers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BitSoft.StreamTools.Buffers;
 
-namespace StreamTools.Tests;
+namespace BitSoft.StreamTools.Tests;
 
 [TestFixture]
 public sealed class BufferTests

@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StreamTools.Tests;
+namespace BitSoft.StreamTools.Tests;
 
 public class StringStreamTests
 {
@@ -235,6 +235,30 @@ public class StringStreamTests
 
 		// Act & Assert
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
+	}
+
+	[TestCase("Source", true, 16)]
+	[TestCase("Source", false, 16)]
+	[TestCase("a", true, 16)]
+	[TestCase("a", false, 16)]
+	[TestCase("String with smile 😀", true, 16)]
+	[TestCase("String with smile 😀", false, 16)]
+	public async Task Should_ReturnSameString(string source, bool async, int bufferSize)
+	{
+		// Arrange
+		using var read = StringStream.Read(source);
+		using var write = StringStream.Write();
+
+		// Act
+		if (async)
+			await read.CopyToAsync(write, bufferSize: bufferSize);
+		else
+			read.CopyTo(write, bufferSize: bufferSize);
+
+		// Assert
+		var result = write.GetString();
+
+		Assert.That(result, Is.EqualTo(source));
 	}
 
 	private static string CreateString() => Guid.NewGuid().ToString();

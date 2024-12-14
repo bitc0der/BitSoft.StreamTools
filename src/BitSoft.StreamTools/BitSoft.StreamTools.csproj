@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net8</TargetFramework>
-    <AssemblyName>BitSoft.StreamTools</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -10,12 +9,14 @@
     <PackageId>BitSoft.StreamTools</PackageId>
     <Title>StreamTools: high perfomance streaming tool</Title>
     <Description>Yet another one library with .NET streaming helpers.</Description>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>stream;string;performance;memory;cache;</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="$(MSBuildThisFileDirectory)../../logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
