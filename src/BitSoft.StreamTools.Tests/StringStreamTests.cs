@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StreamTools.Tests;
+namespace BitSoft.StreamTools.Tests;
 
 public class StringStreamTests
 {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 using BenchmarkDotNet.Attributes;
-using StreamTools.Benchmarks.Utils;
-using StreamTools.Buffers;
+using BitSoft.StreamTools.Benchmarks.Utils;
+using BitSoft.StreamTools.Buffers;
 
-namespace StreamTools.Benchmarks;
+namespace BitSoft.StreamTools.Benchmarks;
 
 [ShortRunJob]
 [MemoryDiagnoser]

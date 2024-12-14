@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
-namespace StreamTools.Benchmarks.Utils;
+namespace BitSoft.StreamTools.Benchmarks.Utils;
 
 internal static class CompressExtensions
 {
