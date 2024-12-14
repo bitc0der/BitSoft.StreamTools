@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -241,6 +241,8 @@ public class StringStreamTests
 	[TestCase("Source", false, 16)]
 	[TestCase("a", true, 16)]
 	[TestCase("a", false, 16)]
+	[TestCase("String with smile 😀", true, 16)]
+	[TestCase("String with smile 😀", false, 16)]
 	public async Task Should_ReturnSameString(string source, bool async, int bufferSize)
 	{
 		// Arrange
