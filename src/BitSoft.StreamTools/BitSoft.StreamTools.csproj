@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net8</TargetFramework>
-    <AssemblyName>BitSoft.StreamTools</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>
