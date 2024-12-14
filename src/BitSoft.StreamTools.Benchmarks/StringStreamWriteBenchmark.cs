@@ -14,7 +14,7 @@ public class StringStreamWriteBenchmark
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		_buffer = Create.String(length: 64 * 1024 * 1024).Compress();
+		_buffer = Create.String(length: 300 * 1024 * 1024).Compress();
 	}
 
 	[Benchmark]

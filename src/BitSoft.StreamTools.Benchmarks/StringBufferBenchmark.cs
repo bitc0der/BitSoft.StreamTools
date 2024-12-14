@@ -13,7 +13,7 @@ public class StringBufferWriteBenchmark
 	private byte[]? _bytes;
 
 	[GlobalSetup]
-	public void GlobalSetup() => _bytes = Create.Buffer(length: 64 * 1024 * 1024);
+	public void GlobalSetup() => _bytes = Create.Buffer(length: 300 * 1024 * 1024);
 
 	[Benchmark]
 	public string StringBuilderBuffer()

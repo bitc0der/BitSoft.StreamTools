@@ -18,7 +18,7 @@ public class StringStreamReadBenchmark
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		_string = Create.String(length: 64 * 1024 * 1024);
+		_string = Create.String(length: 300 * 1024 * 1024);
 	}
 
 	[IterationSetup]
