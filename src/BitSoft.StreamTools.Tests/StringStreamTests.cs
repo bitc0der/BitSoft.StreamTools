@@ -237,9 +237,9 @@ public class StringStreamTests
 		Assert.Throws<InvalidOperationException>(() => stream.Position = 1);
 	}
 
-	[TestCase("Source", true)]
-	[TestCase("Source", false)]
-	public async Task Should_ReturnSameString(string source, bool async)
+	[TestCase("Source", true, 16)]
+	[TestCase("Source", false, 16)]
+	public async Task Should_ReturnSameString(string source, bool async, int bufferSize)
 	{
 		// Arrange
 		using var read = StringStream.Read(source);
@@ -247,9 +247,9 @@ public class StringStreamTests
 
 		// Act
 		if (async)
-			await read.CopyToAsync(write);
+			await read.CopyToAsync(write, bufferSize: bufferSize);
 		else
-			read.CopyTo(write);
+			read.CopyTo(write, bufferSize: bufferSize);
 
 		// Assert
 		var result = write.GetString();
