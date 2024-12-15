@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace BitSoft.StreamTools.Buffers;
@@ -12,6 +13,8 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 	private QueueItm? _root;
 	private QueueItm? _last;
+
+	private bool _disposed;
 
 	public int Length { get; private set; }
 
@@ -28,6 +31,8 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 	public void Append(ReadOnlyMemory<byte> buffer)
 	{
 		if (buffer.Length == 0) return;
+
+		CheckDisposed();
 
 		var item = _last is null
 			? QueueItm.Create(_pool, length: _bufferSize)
@@ -71,6 +76,8 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 	{
 		if (_root is null) return string.Empty;
 
+		CheckDisposed();
+
 		if (_root == _last)
 		{
 			return new string(_root.Array.AsSpan(start: 0, length: _root.Length));
@@ -111,9 +118,19 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		_last = null;
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void CheckDisposed()
+	{
+		if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+	}
+
 	public void Dispose()
 	{
+		if (_disposed) return;
+
 		Clear();
+
+		_disposed = true;
 	}
 
 	private sealed class QueueItm : IDisposable
