@@ -18,7 +18,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 	public ArrayPoolQueueStringBuffer(
 		Encoding? encoding = null,
 		ArrayPool<char>? pool = null,
-		int bufferSize = 128 * 1024 * 1024)
+		int bufferSize = 128 * 1024)
 	{
 		_pool = pool ?? ArrayPool<char>.Shared;
 		_encoding = encoding ?? Encoding.UTF8;

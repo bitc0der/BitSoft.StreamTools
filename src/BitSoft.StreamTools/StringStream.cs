@@ -88,6 +88,19 @@ public class StringStream : Stream
 		);
 	}
 
+	public static StringStream WriteWithArrayPoolQueue(
+		ArrayPool<char>? arrayPool = null,
+		Encoding? encoding = null,
+		int bufferSize = 128 * 1024)
+	{
+		encoding = GetEncodingOrDefault(encoding);
+		return new(
+			stringBuffer: new ArrayPoolQueueStringBuffer(encoding, arrayPool, bufferSize),
+			disposeBuffer: true,
+			encoding: encoding
+		);
+	}
+
 	public static StringStream WriteWithMemoryPool(MemoryPool<char>? memoryPool = null, Encoding? encoding = null)
 	{
 		encoding = GetEncodingOrDefault(encoding);

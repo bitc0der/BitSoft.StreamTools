@@ -35,6 +35,14 @@ public class StringStreamWriteBenchmark
 	}
 
 	[Benchmark]
+	public string StringStream_WriteWithArrayPoolQueued()
+	{
+		using var stream = StringStream.WriteWithArrayPoolQueue();
+		_buffer!.DecompressTo(stream);
+		return stream.GetString();
+	}
+
+	[Benchmark]
 	public string StringStream_WriteWithMemoryPool()
 	{
 		using var stream = StringStream.WriteWithMemoryPool();
