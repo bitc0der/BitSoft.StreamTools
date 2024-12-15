@@ -8,17 +8,21 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 {
 	private readonly Encoding _encoding;
 	private readonly ArrayPool<char> _pool;
-	private readonly int _bufferSize = 80 * 1024;
+	private readonly int _bufferSize;
 
 	private QueueItm? _root;
 	private QueueItm? _last;
 
 	public int Length { get; private set; }
 
-	public ArrayPoolQueueStringBuffer(Encoding? encoding = null, ArrayPool<char>? pool = null)
+	public ArrayPoolQueueStringBuffer(
+		Encoding? encoding = null,
+		ArrayPool<char>? pool = null,
+		int bufferSize = 128 * 1024 * 1024)
 	{
 		_pool = pool ?? ArrayPool<char>.Shared;
 		_encoding = encoding ?? Encoding.UTF8;
+		_bufferSize = bufferSize;
 	}
 
 	public void Append(ReadOnlyMemory<byte> buffer)
