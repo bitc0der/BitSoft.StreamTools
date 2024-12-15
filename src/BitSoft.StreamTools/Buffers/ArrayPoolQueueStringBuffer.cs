@@ -76,24 +76,26 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 			return new string(_root.Array.AsSpan(start: 0, length: _root.Length));
 		}
 
-		return string.Create(length: Length, _root, (chars, root) =>
+		return string.Create(length: Length, _root, RenderString);
+	}
+
+	private static void RenderString(Span<char> chars, QueueItm root)
+	{
+		var offset = 0;
+		var current = root;
+
+		while (current is not null)
 		{
-			var offset = 0;
-			var current = _root;
+			var sourceSpan = current.Span;
+			if (sourceSpan.IsEmpty)
+				break;
+			var targetSpan = chars.Slice(start: offset, length: sourceSpan.Length);
 
-			while (current is not null)
-			{
-				var sourceSpan = current.Span;
-				if (sourceSpan.IsEmpty)
-					break;
-				var targetSpan = chars.Slice(start: offset, length: sourceSpan.Length);
+			sourceSpan.CopyTo(targetSpan);
 
-				sourceSpan.CopyTo(targetSpan);
-
-				offset += current.Length;
-				current = current.Next;
-			}
-		});
+			offset += current.Length;
+			current = current.Next;
+		}
 	}
 
 	private void Clear()
