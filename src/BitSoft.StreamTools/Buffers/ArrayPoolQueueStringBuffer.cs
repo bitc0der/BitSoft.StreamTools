@@ -67,32 +67,16 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		}
 	}
 
-	private int GetLength()
-	{
-		if (_root is null) return 0;
-
-		var length = 0;
-		var current = _root;
-		while (current is not null)
-		{
-			length += current.Length;
-			current = current.Next;
-		}
-		return length;
-	}
-
 	public string Build()
 	{
 		if (_root is null) return string.Empty;
-
-		var length = GetLength();
 
 		if (_root == _last)
 		{
 			return new string(_root.Array.AsSpan(start: 0, length: _root.Length));
 		}
 
-		var item = QueueItm.Create(_pool, length);
+		var item = QueueItm.Create(_pool, Length);
 
 		var offset = 0;
 		var current = _root;
@@ -115,7 +99,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		_root = item;
 		_last = _root;
 
-		return new string(item.Array.AsSpan(start: 0, length: length));
+		return new string(item.Array.AsSpan(start: 0, length: Length));
 	}
 
 	private void Clear()
