@@ -44,7 +44,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		{
 			Span<char> span;
 
-			while (!item.TryGetSpan(out span))
+			while (!item.TryGetEmptySpan(out span))
 			{
 				var newItem = QueueItm.Create(_pool, length: _bufferSize);
 				item.SetNext(newItem);
@@ -83,13 +83,13 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 			while (current is not null)
 			{
-				Array.Copy(
-					sourceArray: current.Array,
-					sourceIndex: 0,
-					destinationArray: chars.ToArray(),
-					destinationIndex: offset,
-					length: current.Length
-				);
+				var sourceSpan = current.Span;
+				if (sourceSpan.IsEmpty)
+					break;
+				var targetSpan = chars.Slice(start: offset, length: sourceSpan.Length);
+
+				sourceSpan.CopyTo(targetSpan);
+
 				offset += current.Length;
 				current = current.Next;
 			}
@@ -147,7 +147,9 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 			Length = length;
 		}
 
-		public bool TryGetSpan(out Span<char> span)
+		public Span<char> Span => Length == 0 ? [] : Array.AsSpan(start: 0, length: Length);
+
+		public bool TryGetEmptySpan(out Span<char> span)
 		{
 			if (Length < Array.Length)
 			{
