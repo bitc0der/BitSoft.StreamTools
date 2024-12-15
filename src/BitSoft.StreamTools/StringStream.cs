@@ -91,7 +91,7 @@ public class StringStream : Stream
 	public static StringStream WriteWithArrayPoolQueue(
 		ArrayPool<char>? arrayPool = null,
 		Encoding? encoding = null,
-		int bufferSize = 128 * 1024)
+		int bufferSize = 1024 * 1024)
 	{
 		encoding = GetEncodingOrDefault(encoding);
 		return new(

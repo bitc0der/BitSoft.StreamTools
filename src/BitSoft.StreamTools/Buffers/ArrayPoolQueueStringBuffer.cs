@@ -21,7 +21,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 	public ArrayPoolQueueStringBuffer(
 		Encoding? encoding = null,
 		ArrayPool<char>? pool = null,
-		int bufferSize = 128 * 1024)
+		int bufferSize = 1024 * 1024)
 	{
 		_pool = pool ?? ArrayPool<char>.Shared;
 		_encoding = encoding ?? Encoding.UTF8;
@@ -43,7 +43,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		}
 
 		var offset = 0;
-		while (true)
+		while (offset < buffer.Length)
 		{
 			Span<char> span;
 
@@ -83,12 +83,9 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 		CheckDisposed();
 
-		if (_root == _last)
-		{
-			return new string(_root.Array.AsSpan(start: 0, length: _root.Length));
-		}
-
-		return string.Create(length: Length, _root, RenderString);
+		return _root == _last
+			? new string(_root.Span)
+			: string.Create(length: Length, _root, RenderString);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
