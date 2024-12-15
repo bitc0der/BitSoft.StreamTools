@@ -91,11 +91,11 @@ public class StringStream : Stream
 	public static StringStream WriteWithArrayPoolQueue(
 		ArrayPool<char>? arrayPool = null,
 		Encoding? encoding = null,
-		int bufferSize = 1024 * 1024)
+		ArrayPoolQueueOptions? options = null)
 	{
 		encoding = GetEncodingOrDefault(encoding);
 		return new(
-			stringBuffer: new ArrayPoolQueueStringBuffer(encoding, arrayPool, bufferSize),
+			stringBuffer: new ArrayPoolQueueStringBuffer(encoding, arrayPool, options),
 			disposeBuffer: true,
 			encoding: encoding
 		);

@@ -9,8 +9,10 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 {
 	private readonly Encoding _encoding;
 	private readonly ArrayPool<char> _pool;
-	private readonly int _bufferSize;
+	private readonly ArrayPoolQueueOptions _options;
 
+	private int _count;
+	private int _currentBufferSize;
 	private QueueItm? _root;
 	private QueueItm? _last;
 
@@ -21,11 +23,13 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 	public ArrayPoolQueueStringBuffer(
 		Encoding? encoding = null,
 		ArrayPool<char>? pool = null,
-		int bufferSize = 1024 * 1024)
+		ArrayPoolQueueOptions? options = null)
 	{
 		_pool = pool ?? ArrayPool<char>.Shared;
 		_encoding = encoding ?? Encoding.UTF8;
-		_bufferSize = bufferSize;
+		_options = options ?? ArrayPoolQueueOptions.Default;
+
+		_currentBufferSize = _options.BufferSize;
 	}
 
 	public void Append(ReadOnlyMemory<byte> buffer)
@@ -40,6 +44,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		{
 			_root = item;
 			_last = _root;
+			_count = 1;
 		}
 
 		var offset = 0;
@@ -52,6 +57,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 				var newItem = CreateItem();
 				item.Next = newItem;
 				item = newItem;
+				_count++;
 			}
 
 			var maxBytesCount = _encoding.GetByteCount(span);
@@ -72,7 +78,16 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 	private QueueItm CreateItem()
 	{
-		var array = _pool.Rent(minimumLength: _bufferSize);
+		var bufferSize = _currentBufferSize;
+
+		if (_count > 0 & _count % _options.Step == 0)
+		{
+			bufferSize = _options.BufferSize * (_count / _options.Step);
+			if (bufferSize > _options.MaxBufferSize)
+				bufferSize = _options.MaxBufferSize;
+		}
+
+		var array = _pool.Rent(minimumLength: bufferSize);
 
 		return new QueueItm(array);
 	}
