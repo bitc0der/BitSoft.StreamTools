@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BitSoft.StreamTools.Tests.Utils\BitSoft.StreamTools.Tests.Utils.csproj" />
     <ProjectReference Include="..\BitSoft.StreamTools\BitSoft.StreamTools.csproj" />
   </ItemGroup>
 

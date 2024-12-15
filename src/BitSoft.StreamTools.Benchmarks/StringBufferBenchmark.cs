@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
 using BenchmarkDotNet.Attributes;
-using BitSoft.StreamTools.Benchmarks.Utils;
 using BitSoft.StreamTools.Buffers;
+using BitSoft.StreamTools.Tests.Utils;
 
 namespace BitSoft.StreamTools.Benchmarks;
 

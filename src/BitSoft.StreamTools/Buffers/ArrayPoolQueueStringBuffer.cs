@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 
 namespace BitSoft.StreamTools.Buffers;
@@ -11,7 +9,8 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 	private readonly Encoding _encoding;
 	private readonly ArrayPool<char> _pool;
 
-	private List<QueueItm>? _queue;
+	private QueueItm? _root;
+	private QueueItm? _last;
 
 	public int Length => GetLength();
 
@@ -29,14 +28,21 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 		char[]? array = null;
 
-		_queue ??= new List<QueueItm>();
-
 		try
 		{
 			array = _pool.Rent(maxCharsCount);
 			var length = _encoding.GetChars(bytes: buffer.Span, chars: array.AsSpan());
 			var item = new QueueItm(array, _pool, length: length);
-			_queue.Add(item);
+
+			if (_last is null)
+			{
+				_root ??= item;
+				_last = _root;
+			}
+			else
+			{
+				_last.SetNext(item);
+			}
 		}
 		catch
 		{
@@ -47,15 +53,14 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 	private int GetLength()
 	{
-		if (_queue?.Count == 0 ) return 0;
-
-		Debug.Assert(_queue is not null);
+		if (_root is null) return 0;
 
 		var length = 0;
-		for (var i = 0; i < _queue.Count; i++)
+		var current = _root;
+		while (current is not null)
 		{
-			var item = _queue[i];
-			length += item.Length;
+			length += current.Length;
+			current = current.Next;
 		}
 		return length;
 	}
@@ -72,25 +77,25 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 			array = _pool.Rent(length);
 
 			var offset = 0;
-			for (var i = 0; i < _queue!.Count; i++)
-			{
-				var item = _queue[i];
+			var current = _root;
 
+			while (current is not null)
+			{
 				Array.Copy(
-					sourceArray: item.Array,
+					sourceArray: current.Array,
 					sourceIndex: 0,
 					destinationArray: array,
 					destinationIndex: offset,
-					length: item.Length
+					length: current.Length
 				);
+				offset += current.Length;
+				current = current.Next;
 			}
-
-			var queue = new List<QueueItm>();
-			queue.Add(new QueueItm(array, _pool, length));
 
 			Clear();
 
-			_queue = queue;
+			_root = new(array, _pool, length);
+			_last = _root;
 
 			return new string(array.AsSpan(start: 0, length: length));
 		}
@@ -103,15 +108,15 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 	private void Clear()
 	{
-		if (_queue is null) return;
-
-		for (var i = 0; i < _queue.Count; i++)
+		var current = _root;
+		while (current is not null)
 		{
-			var item = _queue[i];
-			item.Dispose();
+			current.Dispose();
+			current = current.Next;
 		}
 
-		_queue = null;
+		_root = null;
+		_last = null;
 	}
 
 	public void Dispose()
@@ -126,11 +131,18 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		public char[] Array { get; }
 		public int Length { get; }
 
+		public QueueItm? Next { get; private set; }
+
 		public QueueItm(char[] array, ArrayPool<char> pool, int length)
 		{
 			Array = array ?? throw new ArgumentNullException(nameof(array));
 			_pool = pool ?? throw new ArgumentNullException(nameof(pool));
 			Length = length;
+		}
+
+		public void SetNext(QueueItm item)
+		{
+			Next = item ?? throw new ArgumentNullException(nameof(item));
 		}
 
 		public void Dispose()

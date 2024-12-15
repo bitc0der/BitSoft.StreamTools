@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
 
-namespace BitSoft.StreamTools.Benchmarks.Utils;
+namespace BitSoft.StreamTools.Tests.Utils;
 
-internal static class Create
+public static class Create
 {
 	public static string String(int length)
 	{
