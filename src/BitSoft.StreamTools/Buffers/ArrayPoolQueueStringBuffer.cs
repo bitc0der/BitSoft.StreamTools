@@ -78,18 +78,29 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 	private QueueItm CreateItem()
 	{
-		var bufferSize = _currentBufferSize;
-
-		if (_count > 0 & _count % _options.Step == 0)
-		{
-			bufferSize = _options.BufferSize * (_count / _options.Step);
-			if (bufferSize > _options.MaxBufferSize)
-				bufferSize = _options.MaxBufferSize;
-		}
+		var bufferSize = GetBufferSize();
 
 		var array = _pool.Rent(minimumLength: bufferSize);
 
 		return new QueueItm(array);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private int GetBufferSize()
+	{
+		if (_count == 0)
+			return _currentBufferSize;
+
+		if (_count % _options.Step == 0)
+		{
+			var bufferSize = _options.BufferSize * (_count / _options.Step) * _options.Multipler;
+			if (bufferSize > _options.MaxBufferSize)
+				bufferSize = _options.MaxBufferSize;
+
+			_currentBufferSize = bufferSize;
+		}
+
+		return _currentBufferSize;
 	}
 
 	public string Build()
