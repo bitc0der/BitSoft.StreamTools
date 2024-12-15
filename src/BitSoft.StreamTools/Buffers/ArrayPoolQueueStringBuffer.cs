@@ -34,9 +34,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 		CheckDisposed();
 
-		var item = _last is null
-			? QueueItm.Create(_pool, length: _bufferSize)
-			: _last;
+		var item = _last is null ? CreateItem() : _last;
 
 		if (_last is null)
 		{
@@ -51,8 +49,8 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 			while (!item.TryGetEmptySpan(out span))
 			{
-				var newItem = QueueItm.Create(_pool, length: _bufferSize);
-				item.SetNext(newItem);
+				var newItem = CreateItem();
+				item.Next = newItem;
 				item = newItem;
 			}
 
@@ -62,7 +60,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 			var bytesSpan = buffer.Slice(start: offset, length: left).Span;
 
 			var length = _encoding.GetChars(bytes: bytesSpan, chars: span);
-			item.SetLength(length);
+			item.Length = length;
 
 			offset += left;
 			Length += length;
@@ -70,6 +68,13 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 			if (offset == buffer.Length)
 				break;
 		}
+	}
+
+	private QueueItm CreateItem()
+	{
+		var array = _pool.Rent(minimumLength: _bufferSize);
+
+		return new QueueItm(array);
 	}
 
 	public string Build()
@@ -86,6 +91,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		return string.Create(length: Length, _root, RenderString);
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void RenderString(Span<char> chars, QueueItm root)
 	{
 		var offset = 0;
@@ -105,19 +111,6 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 		}
 	}
 
-	private void Clear()
-	{
-		var current = _root;
-		while (current is not null)
-		{
-			current.Dispose();
-			current = current.Next;
-		}
-
-		_root = null;
-		_last = null;
-	}
-
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void CheckDisposed()
 	{
@@ -128,42 +121,30 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 	{
 		if (_disposed) return;
 
-		Clear();
+		var current = _root;
+		while (current is not null)
+		{
+			_pool.Return(current.Array);
+			current = current.Next;
+		}
+
+		_root = null;
+		_last = null;
 
 		_disposed = true;
 	}
 
-	private sealed class QueueItm : IDisposable
+	private sealed class QueueItm
 	{
-		private readonly ArrayPool<char> _pool;
-
 		public char[] Array { get; }
 
-		public int Length { get; private set; } = 0;
+		public int Length { get; set; }
 
-		public QueueItm? Next { get; private set; }
+		public QueueItm? Next { get; set; }
 
-		private QueueItm(char[] array, ArrayPool<char> pool)
+		public QueueItm(char[] array)
 		{
 			Array = array ?? throw new ArgumentNullException(nameof(array));
-			_pool = pool ?? throw new ArgumentNullException(nameof(pool));
-		}
-
-		public static QueueItm Create(char[] buffer, ArrayPool<char> pool)
-		{
-			return new QueueItm(buffer, pool);
-		}
-
-		public static QueueItm Create(ArrayPool<char> pool, int length)
-		{
-			var array = pool.Rent(minimumLength: length);
-
-			return new QueueItm(array, pool);
-		}
-
-		public void SetLength(int length)
-		{
-			Length = length;
 		}
 
 		public Span<char> Span => Length == 0 ? [] : Array.AsSpan(start: 0, length: Length);
@@ -177,16 +158,6 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 			}
 			span = [];
 			return false;
-		}
-
-		public void SetNext(QueueItm item)
-		{
-			Next = item ?? throw new ArgumentNullException(nameof(item));
-		}
-
-		public void Dispose()
-		{
-			_pool.Return(Array);
 		}
 	}
 }
