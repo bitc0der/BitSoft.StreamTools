@@ -58,6 +58,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 				var newItem = CreateItem();
 				item.Next = newItem;
 				item = newItem;
+				_last = item;
 				_count++;
 			}
 
@@ -109,11 +110,11 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 	public string Build()
 	{
-		if (_root is null) return string.Empty;
-
 		CheckDisposed();
 
-		return _root == _last
+		if (_root is null) return string.Empty;
+
+		return _count == 1
 			? new string(_root.Span)
 			: string.Create(length: Length, _root, RenderString);
 	}
