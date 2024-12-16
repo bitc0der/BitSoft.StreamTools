@@ -13,6 +13,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 
 	private int _count;
 	private int _currentBufferSize;
+	private bool _maxBufferSize;
 	private QueueItm? _root;
 	private QueueItm? _last;
 
@@ -66,7 +67,7 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 			var bytesSpan = buffer.Slice(start: offset, length: left).Span;
 
 			var length = _encoding.GetChars(bytes: bytesSpan, chars: span);
-			item.Length = length;
+			item.Length += length;
 
 			offset += left;
 			Length += length;
@@ -88,15 +89,18 @@ public class ArrayPoolQueueStringBuffer : IStringBuffer
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private int GetBufferSize()
 	{
-		if (_count == 0)
-			return _currentBufferSize;
+		if (_maxBufferSize) return _options.MaxBufferSize;
+
+		if (_count == 0) return _options.BufferSize;
 
 		if (_count % _options.Step == 0)
 		{
-			var bufferSize = _options.BufferSize * (_count / _options.Step) * _options.Multipler;
-			if (bufferSize > _options.MaxBufferSize)
+			var bufferSize = _options.BufferSize * _options.Multiplier * (_count / _options.Step);
+			if (bufferSize < 0 || bufferSize > _options.MaxBufferSize)
+			{
 				bufferSize = _options.MaxBufferSize;
-
+				_maxBufferSize = true;
+			}
 			_currentBufferSize = bufferSize;
 		}
 
