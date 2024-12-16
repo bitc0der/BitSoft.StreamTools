@@ -9,9 +9,10 @@ public static class Create
 	{
 		var builder = new StringBuilder(capacity: length);
 
+		var random = new Random();
 		for (var i = 0; i < length; i++)
 		{
-			builder.Append('A');
+			builder.Append(random.Next(minValue: 'a', maxValue: 'z'));
 		}
 
 		return builder.ToString();

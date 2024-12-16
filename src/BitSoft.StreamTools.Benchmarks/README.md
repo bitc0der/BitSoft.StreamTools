@@ -2,13 +2,13 @@
 
 ## StringBufferWriteBenchmark
 ```text
-| Method                     | Mean     | Error    | StdDev  | Gen0     | Gen1     | Gen2     | Allocated |
-|--------------------------- |---------:|---------:|--------:|---------:|---------:|---------:|----------:|
-| StringBuilderBuffer        | 189.2 ms | 67.02 ms | 3.67 ms |        - |        - |        - |   1200 MB |
-| ArrayStringBuffer          | 127.3 ms | 35.76 ms | 1.96 ms |        - |        - |        - |    600 MB |
-| MemoryStringBuffer         | 124.5 ms |  3.03 ms | 0.17 ms |        - |        - |        - |    600 MB |
-| ArrayPoolQueueStringBuffer | 104.3 ms | 44.72 ms | 2.45 ms |        - |        - |        - |      2 MB |
-| Encoding_UTF8_GetString    | 103.6 ms | 29.39 ms | 1.61 ms | 600.0000 | 600.0000 | 600.0000 |    600 MB |
+| Method                     | Mean     | Error   | StdDev  | Gen0     | Gen1     | Gen2     | Allocated |
+|--------------------------- |---------:|--------:|--------:|---------:|---------:|---------:|----------:|
+| StringBuilderBuffer        | 193.6 ms | 6.91 ms | 4.57 ms |        - |        - |        - |   1200 MB |
+| ArrayStringBuffer          | 129.2 ms | 5.14 ms | 3.40 ms |        - |        - |        - |    600 MB |
+| MemoryStringBuffer         | 127.4 ms | 2.23 ms | 1.33 ms |        - |        - |        - |    600 MB |
+| ArrayPoolQueueStringBuffer | 165.0 ms | 2.20 ms | 1.46 ms |        - |        - |        - |    600 MB |
+| Encoding_UTF8_GetString    | 106.3 ms | 5.91 ms | 3.91 ms | 600.0000 | 600.0000 | 600.0000 |    600 MB |
 ```
 
 ## StringStreamReadBenchmark
@@ -21,13 +21,13 @@
 
 ## StringStreamWriteBenchmark
 ```text
-| Method                                | Mean       | Error       | StdDev   | Gen0      | Gen1      | Gen2      | Allocated     |
-|-------------------------------------- |-----------:|------------:|---------:|----------:|----------:|----------:|--------------:|
-| StringStream_WriteWithStringBuilder   |   698.8 ms |     2.78 ms |  0.15 ms | 4000.0000 | 4000.0000 | 4000.0000 | 1228988.47 KB |
-| StringStream_WriteWithArrayPool       |   871.4 ms |   101.02 ms |  5.54 ms |         - |         - |         - |  614401.23 KB |
-| StringStream_WriteWithArrayPoolQueued |   581.5 ms | 1,103.79 ms | 60.50 ms |         - |         - |         - |     257.29 KB |
-| StringStream_WriteWithMemoryPool      |   866.4 ms |    16.37 ms |  0.90 ms |         - |         - |         - |  614401.51 KB |
-| MemoryStream                          | 1,311.4 ms |    38.63 ms |  2.12 ms | 7000.0000 | 7000.0000 | 7000.0000 | 2097030.05 KB |
+| Method                                | Mean     | Error      | StdDev   | Gen0      | Gen1      | Gen2      | Allocated |
+|-------------------------------------- |---------:|-----------:|---------:|----------:|----------:|----------:|----------:|
+| StringStream_WriteWithStringBuilder   | 641.4 ms |   568.4 ms | 31.16 ms |         - |         - |         - |   3.37 GB |
+| StringStream_WriteWithArrayPool       | 538.5 ms | 1,441.9 ms | 79.03 ms | 1000.0000 | 1000.0000 | 1000.0000 |   4.69 GB |
+| StringStream_WriteWithArrayPoolQueued | 635.3 ms |   445.6 ms | 24.42 ms |         - |         - |         - |   1.69 GB |
+| StringStream_WriteWithMemoryPool      | 506.0 ms |   329.0 ms | 18.03 ms | 1000.0000 | 1000.0000 | 1000.0000 |   4.69 GB |
+| MemoryStream                          | 388.3 ms |   645.7 ms | 35.39 ms |         - |         - |         - |   2.53 GB |
 ```
 
 # Legend
