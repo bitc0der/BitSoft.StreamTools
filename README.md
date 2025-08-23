@@ -15,7 +15,7 @@ using Stream outputStream = StringStream.Write();
 ```
 
 ### Key features
-* [High prefomance](src/StreamTools.Benchmarks/README.md) string based stream.
+* [High prefomance](src/BitSoft.StreamTools.Benchmarks/README.md) string based stream.
 * Low memory allocation
 * Full support of a .NET stream functionality
 * Multiple buffer allocation drivers:
